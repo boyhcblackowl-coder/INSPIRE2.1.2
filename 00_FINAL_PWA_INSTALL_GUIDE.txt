@@ -1,0 +1,46 @@
+INSPIRE 2.1.2 — FINAL PWA INSTALL PATCH
+
+This patch is based on your actual repository and preserves:
+- UI
+- app.js logic
+- styles
+- Cloudflare URL
+- login/backend
+
+WHY THE ICON WAS STILL GENERIC
+The icon files now load correctly, but Chrome was still falling back to "Create shortcut".
+A normal shortcut can use a generic Chrome/site icon.
+The Black Owl manifest icon is reliably used when Chrome installs the site as a PWA.
+
+THIS PATCH:
+- creates a fresh PWA identity: blackowl-pwa-v3
+- adds cache-busting to manifest/icon URLs
+- updates the Service Worker cache identity
+- adds a small "Install INSPIRE" button only when Chrome fires beforeinstallprompt
+- adds install-check.html
+
+UPLOAD
+Replace the root repo files with this package and commit to main.
+
+PHONE CLEAN RESET
+1. Delete ALL old INSPIRE shortcuts.
+2. Chrome > Settings > Site settings > All sites > boyhcblackowl-coder.github.io > Clear & reset.
+3. Force-close Chrome.
+4. Reopen Chrome.
+5. Open:
+   https://boyhcblackowl-coder.github.io/INSPIRE2.1.2/install-check.html
+6. Tap once on the page.
+7. Keep it open for at least 30 seconds.
+8. Refresh once.
+9. You want to see:
+   beforeinstallprompt fired — Chrome considers INSPIRE installable
+10. Tap the "Install INSPIRE" button shown on that page.
+
+Do NOT choose "Create shortcut" if your goal is the PWA icon.
+Use the real Install flow.
+
+Then open the installed app from Home Screen.
+Expected icon: Black Owl.
+
+If beforeinstallprompt does not fire after the clean reset + 30 seconds:
+send a screenshot of install-check.html.

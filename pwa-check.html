@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INSPIRE PWA Check</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0C0D0F;color:#fff;padding:20px;line-height:1.45}
+.card{max-width:650px;margin:auto;background:#17191C;padding:20px;border-radius:16px}
+.ok{color:#7DDF91} .bad{color:#FF8585} code{color:#D7B97C}
+img{width:96px;height:96px;border-radius:18px}
+.row{padding:9px 0;border-bottom:1px solid #333}
+</style>
+</head>
+<body>
+<div class="card">
+<img src="/INSPIRE2.1.2/icon-192.png" alt="Black Owl">
+<h1>INSPIRE PWA Check</h1>
+<div id="results">Checking…</div>
+</div>
+<script>
+(async()=>{
+ const out=[];
+ async function test(label,url){
+  try{
+   const r=await fetch(url,{cache:'no-store'});
+   out.push(`<div class="row ${r.ok?'ok':'bad'}">${r.ok?'✅':'❌'} ${label} — HTTP ${r.status}</div>`);
+  }catch(e){
+   out.push(`<div class="row bad">❌ ${label} — ${e.message}</div>`);
+  }
+ }
+ await test('Manifest','/INSPIRE2.1.2/manifest.json');
+ await test('Icon 192','/INSPIRE2.1.2/icon-192.png');
+ await test('Icon 512','/INSPIRE2.1.2/icon-512.png');
+ await test('Maskable icon','/INSPIRE2.1.2/icon-maskable-512.png');
+ await test('Service worker file','/INSPIRE2.1.2/service-worker.js');
+
+ if('serviceWorker' in navigator){
+   try{
+     const reg=await navigator.serviceWorker.register('/INSPIRE2.1.2/service-worker.js',{scope:'/INSPIRE2.1.2/',updateViaCache:'none'});
+     out.push(`<div class="row ok">✅ Service Worker registered — scope: <code>${reg.scope}</code></div>`);
+     out.push(`<div class="row ${navigator.serviceWorker.controller?'ok':'bad'}">${navigator.serviceWorker.controller?'✅':'⚠️'} Page controlled by Service Worker: ${navigator.serviceWorker.controller?'YES':'NO — refresh once'}</div>`);
+   }catch(e){
+     out.push(`<div class="row bad">❌ Service Worker registration — ${e.message}</div>`);
+   }
+ }
+ out.push(`<div class="row">Display mode standalone: <code>${matchMedia('(display-mode: standalone)').matches}</code></div>`);
+ document.getElementById('results').innerHTML=out.join('');
+})();
+</script>
+</body>
+</html>
