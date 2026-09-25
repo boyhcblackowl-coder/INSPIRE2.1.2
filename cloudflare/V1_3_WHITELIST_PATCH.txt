@@ -1,0 +1,22 @@
+INSPIRE V1.3 CLOUDFLARE ACTION WHITELIST
+
+Add these actions to the Worker's existing allowed-action Set:
+
+getEmployeeCenterData
+getCommunityData
+togglePostLike
+addPostComment
+addCommentReply
+getLearningData
+setLearningProgress
+
+DO NOT change:
+APPS_SCRIPT_URL
+GATEWAY_SECRET
+ALLOWED_ORIGIN
+
+DO NOT remove:
+login
+getAppData
+logout
+changePin

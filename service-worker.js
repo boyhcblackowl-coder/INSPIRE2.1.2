@@ -1,4 +1,4 @@
-const CACHE = 'inspire-2-1-2-blackowl-pwa-v3';
+const CACHE = 'inspire-2-1-2-v1-3-pilot';
 const BASE = '/INSPIRE2.1.2/';
 
 const SHELL = [
