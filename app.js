@@ -152,8 +152,9 @@ async function renderEmployeeCenter(){
 
 function employeeCenterPage_(d){
   var p=d.profile||{}, resources=d.resources||[];
-  var photo=p.photoUrl
-    ? '<img class="ec-photo" src="'+esc(p.photoUrl)+'" alt="'+esc(p.name)+'">'
+  var profilePhotoUrl=profileImageUrl_(p.photoUrl);
+  var photo=profilePhotoUrl
+    ? '<div class="ec-photo-wrap"><img class="ec-photo" src="'+esc(profilePhotoUrl)+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="ec-photo ec-photo-fallback" style="display:none">'+initials(p.name)+'</div></div>'
     : '<div class="ec-photo ec-photo-fallback">'+initials(p.name)+'</div>';
 
   return '<section class="ec-profile-card"><div class="ec-profile-top">'+photo+
@@ -170,6 +171,21 @@ function employeeCenterPage_(d){
     '</section>'+
     '<div class="page-head section-gap"><div class="eyebrow">EMPLOYEE RESOURCES</div><h2>Everything you need in one place</h2><p>Policies, forms, benefits, and internal directory.</p></div>'+
     '<section class="ec-resource-grid">'+resources.map(ecResourceCard_).join('')+'</section>';
+}
+
+function profileImageUrl_(url){
+  var clean=String(url||'').trim();
+  if(!clean)return '';
+
+  var drive=
+    clean.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/i) ||
+    clean.match(/[?&]id=([^&]+)/i);
+
+  if(drive && drive[1]){
+    return 'https://drive.google.com/thumbnail?id='+encodeURIComponent(drive[1])+'&sz=w500';
+  }
+
+  return clean;
 }
 
 function ecInfo_(label,value,icon){
