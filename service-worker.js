@@ -1,4 +1,4 @@
-const CACHE = 'inspire-2-1-2-v1-3-pilot';
+const CACHE = 'inspire-2-1-2-profile-photo-v1';
 const BASE = '/INSPIRE2.1.2/';
 
 const SHELL = [
