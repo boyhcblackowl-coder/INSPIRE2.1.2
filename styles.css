@@ -116,3 +116,103 @@ button.ec-info-card{width:100%}.ec-info-icon{width:39px;height:39px;border-radiu
   .post-card{border-radius:17px;padding:14px}.post-card h2{font-size:19px}.comment-compose{align-items:stretch}.comment-compose input{min-width:0}
   .learning-card{padding:14px}.learning-icon{width:42px;height:42px}.learning-viewer{height:66vh}
 }
+
+
+/* =========================================================
+   INSPIRE V1.4 — ABOUT / SOCIAL / RESOURCE ACTIONS / LEARNING LIBRARY
+   ========================================================= */
+.home-section-head{margin-top:26px}
+.home-feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.home-feature-card{
+  min-height:170px;border:1px solid var(--line);border-radius:20px;background:var(--white);
+  box-shadow:var(--shadow);padding:20px;text-align:left;color:var(--text);display:flex;gap:14px;align-items:flex-start
+}
+button.home-feature-card{width:100%;cursor:pointer}
+.home-feature-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.home-feature-icon{
+  width:48px;height:48px;border-radius:15px;background:#F3E8D0;display:flex;align-items:center;justify-content:center;
+  font-size:23px;flex:0 0 auto
+}
+.home-feature-card h3{margin:5px 0 7px;font-size:19px}
+.home-feature-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+.feature-arrow{margin-left:auto;color:#B89350;font-size:22px;align-self:center}
+.social-card-copy{flex:1;min-width:0}
+.social-mini-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.social-mini-list button{
+  border:1px solid #E8DDC9;background:#FBF6EA;color:#6B5227;border-radius:999px;padding:6px 9px;
+  font-size:9px;font-weight:800
+}
+.text-link{border:0;background:transparent;padding:9px 0 0;color:#7A6540;font-size:10px;font-weight:900}
+
+.about-hero{
+  border-radius:26px;padding:30px;color:#fff;
+  background:radial-gradient(circle at 90% 0%,rgba(215,185,124,.22),transparent 34%),linear-gradient(135deg,#090A0B,#24231F);
+  box-shadow:var(--shadow)
+}
+.about-hero h1{margin:8px 0 12px;font-size:34px;max-width:760px}
+.about-hero p{margin:0;max-width:900px;color:#DDD3C1;line-height:1.7;font-size:13px}
+.vision-mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.about-info-card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow)}
+.about-info-card h2{margin:12px 0 0;font-size:21px;line-height:1.45}
+.epiic-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}
+.epiic-card{background:#111214;border:1px solid rgba(215,185,124,.2);border-radius:18px;padding:18px;color:#fff;min-height:180px}
+.epiic-letter{
+  width:42px;height:42px;border-radius:13px;background:#D7B97C;color:#0C0D0F;
+  display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:950
+}
+.epiic-card h3{margin:13px 0 7px;font-size:14px}
+.epiic-card p{margin:0;color:#D6CCB8;font-size:11px;line-height:1.55}
+
+.social-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.social-account-card{
+  width:100%;display:flex;gap:12px;align-items:center;text-align:left;padding:14px;border-radius:16px;
+  border:1px solid var(--line);background:var(--white);color:var(--text);box-shadow:var(--shadow)
+}
+.social-account-card:hover{border-color:var(--gold)}
+.social-account-icon{
+  width:40px;height:40px;border-radius:12px;background:#F3E8D0;display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#6B5227;flex:0 0 auto
+}
+.social-account-card>div:nth-child(2){flex:1;min-width:0}
+.social-account-card strong,.social-account-card span{display:block}
+.social-account-card strong{font-size:12px}.social-account-card span{font-size:9px;color:var(--muted);margin-top:3px}
+
+.resource-action-list{display:grid;grid-template-columns:1fr;gap:9px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.resource-action-card{
+  width:100%;display:flex;gap:12px;align-items:center;text-align:left;padding:13px 14px;border-radius:15px;
+  border:1px solid var(--line);background:#FBF8F1;color:var(--text)
+}
+.resource-action-card:hover{border-color:var(--gold);background:#FFFDF9}
+.resource-action-icon{
+  width:40px;height:40px;border-radius:12px;background:#F3E8D0;display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;font-size:18px
+}
+.resource-action-card>div:nth-child(2){flex:1;min-width:0}
+.resource-action-card strong,.resource-action-card span{display:block}
+.resource-action-card strong{font-size:12px}.resource-action-card span{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+.learning-toolbar{
+  display:grid;grid-template-columns:minmax(220px,1.6fr) minmax(150px,.7fr) minmax(150px,.7fr);
+  gap:9px;margin-bottom:10px
+}
+.learning-search{
+  display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:13px;padding:0 12px
+}
+.learning-search input{border:0;background:transparent;width:100%;padding:12px 0;outline:0}
+.learning-toolbar select{
+  border:1px solid var(--line);background:var(--white);color:var(--text);border-radius:13px;padding:0 12px;min-height:44px
+}
+.learning-result-meta{font-size:10px;color:var(--muted);font-weight:800;margin:5px 0 10px}
+
+@media(max-width:980px){
+  .epiic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .social-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .home-feature-grid,.vision-mission-grid,.social-grid{grid-template-columns:1fr}
+  .home-feature-card{min-height:auto}
+  .about-hero{padding:21px;border-radius:21px}.about-hero h1{font-size:27px}
+  .epiic-grid{grid-template-columns:1fr}
+  .epiic-card{min-height:auto}
+  .learning-toolbar{grid-template-columns:1fr}
+}
