@@ -118,15 +118,104 @@ function go(r){
   window.scrollTo(0,0)
 }
 function home(){
-  var first=(data.user.name||'sOWLdier').split(' ')[0];
-  var metrics=(data.metrics||[]).slice(0,3).map(function(m){return '<div class="card metric"><span>'+esc(m.METRIC)+'</span><strong>'+esc(m.VALUE)+'</strong></div>'}).join('');
-  return '<div class="hero"><div class="eyebrow" style="color:#D7B97C">THE DIGITAL HOME OF sOWLdiers</div><h1>Hi, '+esc(first)+'! 👋</h1><p>One login for connection, learning, employee services, culture, and growth at Black Owl.</p></div>'
-   +(data.forcePinChange?'<div class="notice">🔐 You are using a temporary PIN. Please create your personal PIN from Profile.</div>':'')
-   +(metrics?'<div class="grid">'+metrics+'</div>':'')
-   +'<div class="page-head" style="margin-top:25px"><div class="eyebrow">YOUR INSPIRE</div><h1>Everything in one place</h1><p>INSPIRE 2.1 — Employee, Community & Learning Pilot.</p></div><div class="grid">'
-   +data.menus.filter(function(m){return m.route!=='home'}).map(function(m){return '<button class="card module-card" style="text-align:left" onclick="go(\''+arg(m.route)+'\')"><div class="icon">'+esc(m.icon)+'</div><h3>'+esc(m.label)+'</h3><p>'+esc(m.description||'INSPIRE module')+'</p></button>'}).join('')
-   +'</div>'
+  var fullName=(data.user.name||'sOWLdier').trim();
+  var metrics=(data.metrics||[]).slice(0,3).map(function(m){
+    return '<div class="card metric"><span>'+esc(m.METRIC)+'</span><strong>'+esc(m.VALUE)+'</strong></div>'
+  }).join('');
+
+  return '<div class="hero"><div class="eyebrow" style="color:#D7B97C">THE DIGITAL HOME OF sOWLdiers</div>'+
+    '<h1>Hi, '+esc(fullName)+'! 👋</h1>'+
+    '<p>One login for connection, learning, employee services, culture, and growth at Black Owl.</p></div>'+
+    (data.forcePinChange?'<div class="notice">🔐 You are using a temporary PIN. Please create your personal PIN from Profile.</div>':'')+
+    (metrics?'<div class="grid">'+metrics+'</div>':'')+
+
+    '<div class="page-head home-section-head"><div class="eyebrow">DISCOVER BLACK OWL</div>'+
+      '<h1>Know the journey. Live the culture.</h1>'+
+      '<p>Get to know Black Owl, our direction, and the values behind the way we work.</p></div>'+
+    '<div class="home-feature-grid">'+
+      '<button class="home-feature-card about-card" onclick="openAboutUs()">'+
+        '<div class="home-feature-icon">🦉</div>'+
+        '<div><div class="eyebrow">ABOUT US</div><h3>Black Owl Indonesia</h3>'+
+        '<p>Vision, mission, and the EPIIC values that guide every sOWLdier.</p></div><span class="feature-arrow">›</span>'+
+      '</button>'+
+      officialInstagramCard_()+
+    '</div>'+
+
+    '<div class="page-head home-section-head"><div class="eyebrow">YOUR INSPIRE</div><h1>Everything in one place</h1>'+
+      '<p>Employee services, community, learning, culture, and growth.</p></div>'+
+    '<div class="grid">'+
+      data.menus.filter(function(m){return m.route!=='home'}).map(function(m){
+        return '<button class="card module-card" style="text-align:left" onclick="go(\''+arg(m.route)+'\')">'+
+          '<div class="icon">'+esc(m.icon)+'</div><h3>'+esc(m.label)+'</h3><p>'+esc(m.description||'INSPIRE module')+'</p></button>'
+      }).join('')+
+    '</div>';
 }
+
+function openAboutUs(){
+  q('#content').innerHTML=
+    '<button class="back-link" onclick="go(\'home\')">‹ Back to Home</button>'+
+    '<section class="about-hero">'+
+      '<div class="eyebrow">ABOUT BLACK OWL</div>'+
+      '<h1>Creating the finest and innovative lifestyle experiences.</h1>'+
+      '<p>Kami percaya bahwa setiap langkah besar dimulai dari kolaborasi yang kuat. INSPIRE menghadirkan informasi, aktivitas, serta pencapaian yang menjadi bagian dari perjalanan kita sebagai satu tim. Mari terus berkolaborasi, berbagi semangat, dan bangga menjadi bagian dari perjalanan ini.</p>'+
+    '</section>'+
+    '<section class="vision-mission-grid">'+
+      '<div class="about-info-card"><div class="eyebrow">VISI</div><h2>Menjadi Pemimpin di Bidang Industri <em>Lifestyle</em></h2></div>'+
+      '<div class="about-info-card"><div class="eyebrow">MISI</div><h2>Menciptakan Pengalaman untuk Tamu yang Luar Biasa dan Inovatif</h2></div>'+
+    '</section>'+
+    '<div class="page-head section-gap"><div class="eyebrow">CORE VALUES</div><h1>EPIIC</h1>'+
+      '<p>The values behind how we work, collaborate, and serve.</p></div>'+
+    '<section class="epiic-grid">'+
+      epiicCard_('E','Excellence','Selalu mengedepankan kualitas dan hasil terbaik.')+
+      epiicCard_('P','Persistence','Terus maju dan pantang menyerah menghadapi tantangan.')+
+      epiicCard_('I','Integrity','Menjunjung kejujuran dan konsistensi dalam setiap tindakan.')+
+      epiicCard_('I','Innovative','Berpikir kreatif dan berani menciptakan hal baru.')+
+      epiicCard_('C','Customer Centric','Menghadirkan pengalaman terbaik bagi setiap pelanggan.')+
+    '</section>'+
+    officialInstagramFull_();
+  window.scrollTo(0,0);
+}
+
+function epiicCard_(letter,title,body){
+  return '<div class="epiic-card"><div class="epiic-letter">'+esc(letter)+'</div><h3>'+esc(title)+'</h3><p>'+esc(body)+'</p></div>';
+}
+
+function officialInstagramCard_(){
+  return '<div class="home-feature-card social-card">'+
+    '<div class="home-feature-icon">📱</div><div class="social-card-copy">'+
+      '<div class="eyebrow">STAY CONNECTED</div><h3>Official Black Owl Instagram</h3>'+
+      '<p>sOWLdiers, make sure you follow all official Black Owl accounts.</p>'+
+      '<div class="social-mini-list">'+
+        socialMini_('@journeywithblackowl','https://www.instagram.com/journeywithblackowl/')+
+        socialMini_('@blackowl.jkt','https://www.instagram.com/blackowl.jkt/')+
+        socialMini_('@blackowl.scbd','https://www.instagram.com/blackowl.scbd/')+
+      '</div>'+
+      '<button class="text-link" onclick="openAboutUs()">View all official accounts →</button>'+
+    '</div></div>';
+}
+
+function officialInstagramFull_(){
+  return '<div class="page-head section-gap"><div class="eyebrow">STAY CONNECTED</div><h1>Official Black Owl Instagram</h1>'+
+    '<p>Follow seluruh akun Instagram official Black Owl untuk update activity, event, campaign, dan perjalanan brand kita.</p></div>'+
+    '<section class="social-grid">'+
+      socialAccount_('@journeywithblackowl','Black Owl Journey','https://www.instagram.com/journeywithblackowl/')+
+      socialAccount_('@blackowl.jkt','Black Owl Jakarta','https://www.instagram.com/blackowl.jkt/')+
+      socialAccount_('@blackowl.scbd','Black Owl SCBD','https://www.instagram.com/blackowl.scbd/')+
+      socialAccount_('@blackowl.sby','Black Owl Surabaya','https://www.instagram.com/blackowl.sby/')+
+      socialAccount_('@blackowl.mdn','Black Owl Medan','https://www.instagram.com/blackowl.mdn/')+
+      socialAccount_('@blackowl.banquet','Black Owl Banquet','https://www.instagram.com/blackowl.banquet/')+
+    '</section>';
+}
+
+function socialMini_(handle,url){
+  return '<button onclick="openExternal_(\''+arg(url)+'\')">'+esc(handle)+'</button>';
+}
+
+function socialAccount_(handle,label,url){
+  return '<button class="social-account-card" onclick="openExternal_(\''+arg(url)+'\')">'+
+    '<div class="social-account-icon">◎</div><div><strong>'+esc(handle)+'</strong><span>'+esc(label)+'</span></div><div class="feature-arrow">↗</div></button>';
+}
+
 function modulePage(r){
   var m=data.menus.find(function(x){return x.route===r})||{label:r,icon:'🦉',description:'INSPIRE module'};
   return '<div class="page-head"><div class="eyebrow">INSPIRE V4</div><h1>'+esc(m.icon)+' '+esc(m.label)+'</h1><p>'+esc(m.description||'')+'</p></div><div class="card" style="text-align:center;padding:34px"><div style="font-size:36px">'+esc(m.icon)+'</div><h2>Gateway connected.</h2><p class="muted">This module will be migrated after the V4 mobile pilot passes.</p></div>'
@@ -169,7 +258,7 @@ function employeeCenterPage_(d){
       ecInfo_('INSPIRE Role',p.role,'🔐')+
       '<button class="ec-info-card" onclick="openChangePin()"><div class="ec-info-icon">🔑</div><div><span>Account Security</span><strong>Change INSPIRE PIN</strong></div></button>'+
     '</section>'+
-    '<div class="page-head section-gap"><div class="eyebrow">EMPLOYEE RESOURCES</div><h2>Everything you need in one place</h2><p>Policies, forms, benefits, and internal directory.</p></div>'+
+    '<div class="page-head section-gap"><div class="eyebrow">EMPLOYEE RESOURCES</div><h2>Everything you need in one place</h2><p>Policies, forms, benefits, directory, and Whistle Blowing System.</p></div>'+
     '<section class="ec-resource-grid">'+resources.map(ecResourceCard_).join('')+'</section>';
 }
 
@@ -207,13 +296,25 @@ function openEmployeeResourceDetail(id){
   if(r.primaryActionLabel) actions+=resourceActionButton_(r.primaryActionLabel,r.primaryUrl,true);
   if(r.secondaryActionLabel) actions+=resourceActionButton_(r.secondaryActionLabel,r.secondaryUrl,false);
 
+  var dynamicActions=(r.actions||[]).length
+    ? '<div class="resource-action-list">'+(r.actions||[]).map(resourceActionCard_).join('')+'</div>'
+    : '';
+
   q('#content').innerHTML='<button class="back-link" onclick="renderEmployeeCenter()">‹ Back to Employee Center</button>'+
     '<section class="detail-card"><div class="detail-icon">'+esc(r.icon||'🔗')+'</div><div class="eyebrow">EMPLOYEE RESOURCE</div>'+
     '<h1>'+esc(r.contentTitle||r.title||'Resource')+'</h1><p class="detail-lead">'+esc(r.description||'')+'</p>'+
     '<div class="detail-body">'+formatBody_(r.contentBody||'')+'</div>'+
     renderMediaPlayer_(r.videoTitle||'',r.videoUrl||'','video')+
+    dynamicActions+
     (actions?'<div class="detail-actions">'+actions+'</div>':'')+'</section>';
   window.scrollTo(0,0)
+}
+
+function resourceActionCard_(a){
+  return '<button class="resource-action-card" onclick="openExternal_(\''+arg(a.url||'')+'\')">'+
+    '<div class="resource-action-icon">'+esc(a.icon||'↗')+'</div>'+
+    '<div><strong>'+esc(a.label||'Open')+'</strong><span>'+esc(a.description||'')+'</span></div>'+
+    '<div class="feature-arrow">↗</div></button>';
 }
 
 function resourceActionButton_(label,url,primary){
@@ -316,9 +417,66 @@ async function renderLearning(force){
 
 function learningPage_(d){
   var modules=(d&&d.modules)||[];
-  return '<div class="page-head"><div class="eyebrow">LEARNING</div><h1>Learning Hub</h1>'+
-    '<p>Build capability, track progress, and keep Black Owl standards consistent.</p></div>'+
-    '<div class="learning-grid">'+modules.map(learningCard_).join('')+'</div>';
+  var departments=[];
+  var periods=[];
+
+  modules.forEach(function(m){
+    var dept=String(m.category||'General');
+    if(departments.indexOf(dept)<0) departments.push(dept);
+    var period=learningPeriod_(m);
+    if(period && periods.indexOf(period)<0) periods.push(period);
+  });
+
+  departments.sort();
+  periods.sort(function(a,b){return learningPeriodKey_(b)-learningPeriodKey_(a)});
+
+  return '<div class="page-head"><div class="eyebrow">LEARNING</div><h1>Operational Learning Library</h1>'+
+    '<p>'+modules.length+' learning modules available. Search by topic, department, or training period.</p></div>'+
+    '<section class="learning-toolbar">'+
+      '<div class="learning-search"><span>⌕</span><input id="learningSearch" placeholder="Search learning module…" oninput="applyLearningFilters_()"></div>'+
+      '<select id="learningDeptFilter" onchange="applyLearningFilters_()"><option value="">All Departments</option>'+
+        departments.map(function(x){return '<option value="'+esc(x)+'">'+esc(x)+'</option>'}).join('')+
+      '</select>'+
+      '<select id="learningPeriodFilter" onchange="applyLearningFilters_()"><option value="">All Periods</option>'+
+        periods.map(function(x){return '<option value="'+esc(x)+'">'+esc(x)+'</option>'}).join('')+
+      '</select>'+
+    '</section>'+
+    '<div id="learningResultMeta" class="learning-result-meta"></div>'+
+    '<div id="learningResults" class="learning-grid">'+modules.map(learningCard_).join('')+'</div>';
+}
+
+function learningPeriod_(m){
+  var d=String(m.description||'');
+  var parts=d.split('•').map(function(x){return x.trim()});
+  return parts.length>=3?parts[1]:'';
+}
+
+function learningPeriodKey_(period){
+  var map={Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+  var p=String(period||'').split(/\s+/);
+  return Number(p[1]||0)*100+(map[p[0]]||0);
+}
+
+function applyLearningFilters_(){
+  var modules=(learningCache&&learningCache.modules)||[];
+  var search=(q('#learningSearch')&&q('#learningSearch').value||'').toLowerCase().trim();
+  var dept=(q('#learningDeptFilter')&&q('#learningDeptFilter').value||'');
+  var period=(q('#learningPeriodFilter')&&q('#learningPeriodFilter').value||'');
+
+  var filtered=modules.filter(function(m){
+    var hay=[m.title,m.category,m.description,m.fileType].join(' ').toLowerCase();
+    if(search && hay.indexOf(search)<0) return false;
+    if(dept && String(m.category||'')!==dept) return false;
+    if(period && learningPeriod_(m)!==period) return false;
+    return true;
+  });
+
+  var result=q('#learningResults');
+  var meta=q('#learningResultMeta');
+  if(meta) meta.textContent=filtered.length+' module'+(filtered.length===1?'':'s')+' shown';
+  if(result) result.innerHTML=filtered.length
+    ? filtered.map(learningCard_).join('')
+    : '<div class="card empty-state"><div>🎓</div><h2>No modules found</h2><p>Try another search or filter.</p></div>';
 }
 
 function learningCard_(m){
