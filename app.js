@@ -506,7 +506,11 @@ function highlightHandbook_(text,needle){
 }
 
 function escapeRegExp_(s){
-  return String(s||'').replace(/[.*+?^$()|[\]{}\\]/g,'\\
+  var specials='\\\\^$.*+?()[]{}|';
+  return String(s||'').split('').map(function(ch){
+    return specials.indexOf(ch)>=0?'\\\\'+ch:ch;
+  }).join('');
+}
 
 /* =========================================================
    COMMUNITY PILOT');
