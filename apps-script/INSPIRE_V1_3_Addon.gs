@@ -1,5 +1,5 @@
 /* =========================================================
-   INSPIRE V1.3 ADD-ON
+   INSPIRE V1.4 ADD-ON
    Add this as a NEW .gs file in the existing Apps Script project.
    Do NOT replace login/session/security functions in Code.gs.
    Requires existing helpers from INSPIRE V5:
@@ -13,6 +13,31 @@ function getEmployeeCenterData(sessionToken) {
   var division = String(emp.DIVISION || '').toUpperCase();
   var outlet = String(emp.OUTLET || '').toUpperCase();
 
+  var actionRows = rows_('Resource_Actions')
+    .filter(function(a){ return String(a.ENABLED || '').toUpperCase() === 'TRUE'; })
+    .filter(function(a){ return inspireScopeAllowed_(a.ALLOWED_ROLES, role); })
+    .filter(function(a){ return inspireScopeAllowed_(a.ALLOWED_DIVISIONS, division); })
+    .filter(function(a){ return inspireScopeAllowed_(a.ALLOWED_OUTLETS, outlet); });
+
+  var actionsByResource = {};
+  actionRows.forEach(function(a){
+    var resourceId = String(a.RESOURCE_ID || '');
+    if (!resourceId) return;
+    if (!actionsByResource[resourceId]) actionsByResource[resourceId] = [];
+    actionsByResource[resourceId].push({
+      id: a.ACTION_ID || '',
+      label: a.LABEL || '',
+      url: a.URL || '',
+      icon: a.ICON || '↗',
+      description: a.DESCRIPTION || '',
+      sortOrder: Number(a.SORT_ORDER || 999)
+    });
+  });
+
+  Object.keys(actionsByResource).forEach(function(k){
+    actionsByResource[k].sort(function(a,b){ return a.sortOrder - b.sortOrder; });
+  });
+
   var resources = rows_('Employee_Resources')
     .filter(function(r){ return String(r.ENABLED || '').toUpperCase() === 'TRUE'; })
     .filter(function(r){ return inspireScopeAllowed_(r.ALLOWED_ROLES, role); })
@@ -20,8 +45,9 @@ function getEmployeeCenterData(sessionToken) {
     .filter(function(r){ return inspireScopeAllowed_(r.ALLOWED_OUTLETS, outlet); })
     .sort(function(a,b){ return Number(a.SORT_ORDER || 999) - Number(b.SORT_ORDER || 999); })
     .map(function(r){
+      var id = r.RESOURCE_ID || '';
       return {
-        id: r.RESOURCE_ID || '',
+        id: id,
         category: r.CATEGORY || 'EMPLOYEE_RESOURCES',
         title: r.TITLE || '',
         description: r.DESCRIPTION || '',
@@ -33,7 +59,8 @@ function getEmployeeCenterData(sessionToken) {
         secondaryActionLabel: r.SECONDARY_ACTION_LABEL || '',
         secondaryUrl: r.SECONDARY_URL || '',
         videoTitle: r.VIDEO_TITLE || '',
-        videoUrl: r.VIDEO_URL || ''
+        videoUrl: r.VIDEO_URL || '',
+        actions: actionsByResource[String(id)] || []
       };
     });
 
