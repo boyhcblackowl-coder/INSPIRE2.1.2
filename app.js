@@ -1,4 +1,4 @@
-var data=null, token='', activeRoute='home', lastLoginPin='', employeeCenterCache=null, communityCache=null, learningCache=null, handbookCache=null, handbookActiveChapter='';
+var data=null, token='', activeRoute='home', lastLoginPin='', employeeCenterCache=null, communityCache=null, bossCache=null, learningCache=null, handbookCache=null, handbookActiveChapter='';
 var TOKEN_KEY='inspire_session_v4', CLIENT_KEY='inspire_client_key_v4';
 
 function q(s){return document.querySelector(s)}
@@ -113,6 +113,7 @@ function go(r){
   if(r==='home'){q('#content').innerHTML=home()}
   else if(r==='employee'){renderEmployeeCenter()}
   else if(r==='community'){renderCommunity()}
+  else if(r==='boss'){renderBoss()}
   else if(r==='learning'){renderLearning()}
   else{q('#content').innerHTML=modulePage(r)}
   window.scrollTo(0,0)
@@ -690,7 +691,7 @@ function communityPost_(p){
   var comments=(p.comments||[]);
   var media='';
   if(String(p.mediaType||'').toUpperCase()==='VIDEO' && p.mediaUrl) media=renderMediaPlayer_(p.mediaTitle||p.title,p.mediaUrl,'video');
-  else if(p.imageUrl) media='<img class="post-image" src="'+esc(p.imageUrl)+'" alt="'+esc(p.title||'Community post')+'">';
+  else if(p.imageUrl) media='<img class="post-image" src="'+esc(contentImageUrl_(p.imageUrl))+'" alt="'+esc(p.title||'Community post')+'" loading="lazy">';
 
   return '<article class="post-card" id="post-'+esc(p.id)+'">'+
     '<div class="post-meta"><div class="post-author-avatar">'+initials(p.authorName||'BO')+'</div><div><strong>'+esc(p.authorName||'Black Owl')+
@@ -702,6 +703,70 @@ function communityPost_(p){
     '<div class="comment-compose"><input id="comment-'+esc(p.id)+'" maxlength="600" placeholder="Write a comment…">'+
     '<button class="primary" onclick="submitCommunityComment_(\''+arg(p.id)+'\')">Post</button></div>'+
     '<div class="comments-list">'+comments.map(function(c){return communityComment_(p.id,c)}).join('')+'</div></article>';
+}
+
+function contentImageUrl_(url){
+  var clean=String(url||'').trim();
+  if(!clean)return '';
+  var drive=
+    clean.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/i) ||
+    clean.match(/[?&]id=([^&]+)/i);
+  if(drive&&drive[1]) return 'https://drive.google.com/thumbnail?id='+encodeURIComponent(drive[1])+'&sz=w1600';
+  return clean;
+}
+
+/* =========================================================
+   BOSS — BLACK OWL SPORTS SERIES CMS
+   Data source: Posts sheet, CATEGORY = BOSS
+   ========================================================= */
+
+async function renderBoss(force){
+  var root=q('#content');
+  root.innerHTML=loadingBlock_('BOSS','Black Owl Sports Series','Loading BOSS activities…');
+  try{
+    if(force||!bossCache) bossCache=await server('getCommunityData',token);
+    root.innerHTML=bossPage_(bossCache);
+  }catch(e){
+    handle(e);
+    root.innerHTML=errorBlock_('BOSS','Unable to load BOSS',e,'bossCache=null;renderBoss(true)');
+  }
+}
+
+function bossPage_(d){
+  var all=(d&&d.posts)||[];
+  var events=all.filter(function(p){return String(p.category||'').toUpperCase()==='BOSS'});
+  events.sort(function(a,b){
+    var ap=a.pinned?1:0,bp=b.pinned?1:0;
+    if(ap!==bp)return bp-ap;
+    return String(b.eventDate||b.createdAt||'').localeCompare(String(a.eventDate||a.createdAt||''));
+  });
+
+  return '<section class="boss-hero">'+
+    '<div><div class="eyebrow">BLACK OWL SPORTS SERIES</div><h1>Move together. Go beyond.</h1>'+
+    '<p>Aktivitas olahraga, wellbeing, dan employee engagement untuk seluruh sOWLdiers.</p></div>'+
+    '<div class="boss-hero-icon">🏃</div></section>'+
+    (events.length?'<div class="boss-grid">'+events.map(bossCard_).join('')+'</div>':
+      '<div class="card empty-state"><div>🏆</div><h2>No BOSS activity yet</h2><p>Aktivitas yang berstatus PUBLISHED dan CATEGORY = BOSS akan muncul otomatis di sini.</p></div>');
+}
+
+function bossCard_(p){
+  var img=p.imageUrl?'<img class="boss-card-image" src="'+esc(contentImageUrl_(p.imageUrl))+'" alt="'+esc(p.title||'BOSS activity')+'" loading="lazy">':'';
+  var date=p.eventDate?'<div class="boss-date">📅 '+esc(p.eventDate)+'</div>':'';
+  var type=String(p.mediaType||'').toUpperCase();
+  var action='';
+  if(p.mediaUrl){
+    if(type==='VIDEO') action='<button class="secondary boss-cta" onclick="openExternal_(\''+arg(p.mediaUrl)+'\')">▶ '+esc(p.mediaTitle||'Watch Video')+'</button>';
+    else action='<button class="primary boss-cta" onclick="openExternal_(\''+arg(p.mediaUrl)+'\')">'+esc(p.mediaTitle||'Open Link')+' ↗</button>';
+  }
+  return '<article class="boss-card">'+
+    img+
+    '<div class="boss-card-body">'+
+      '<div class="boss-card-meta"><span>BOSS</span>'+(p.pinned?'<strong>FEATURED</strong>':'')+'</div>'+
+      '<h2>'+esc(p.title||'BOSS Activity')+'</h2>'+
+      date+
+      '<p>'+esc(p.body||'')+'</p>'+
+      action+
+    '</div></article>';
 }
 
 function communityComment_(postId,c){
@@ -932,7 +997,7 @@ async function savePin(){
   try{await server('changePin',token,o,n);closeModal();toast('PIN updated.');await loadApp()}catch(e){handle(e)}
 }
 async function doLogout(){try{await server('logout',token)}catch(e){}clearSession();closeModal();showLogin()}
-function clearSession(){token='';data=null;lastLoginPin='';employeeCenterCache=null;communityCache=null;learningCache=null;handbookCache=null;handbookActiveChapter='';localStorage.removeItem(TOKEN_KEY)}
+function clearSession(){token='';data=null;lastLoginPin='';employeeCenterCache=null;communityCache=null;bossCache=null;learningCache=null;handbookCache=null;handbookActiveChapter='';localStorage.removeItem(TOKEN_KEY)}
 function togglePin(){var x=q('#pin'),b=x.nextElementSibling;x.type=x.type==='password'?'text':'password';b.textContent=x.type==='password'?'Show':'Hide'}
 function installText(){return /iphone|ipad|ipod/i.test(navigator.userAgent)?'Safari → Share → Add to Home Screen.':'Chrome → menu ⋮ → Add to Home screen / Install app.'}
 function openModal(h){q('#modalBody').innerHTML=h;q('#modal').classList.remove('hidden')}

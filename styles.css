@@ -397,3 +397,42 @@ button.home-feature-card{width:100%;cursor:pointer}
   .grooming-gallery,.grooming-gallery:has(.grooming-visual-card:only-child){grid-template-columns:1fr}
   .grooming-visual-label{align-items:flex-start;flex-direction:column;gap:3px}
 }
+
+
+/* =========================================================
+   V1.7 — BOSS CONTENT CMS
+   ========================================================= */
+.boss-hero{
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  padding:28px;border-radius:24px;background:linear-gradient(135deg,#111 0%,#2b2417 100%);
+  color:#fff;margin-bottom:22px;box-shadow:0 14px 36px rgba(17,17,17,.12)
+}
+.boss-hero .eyebrow{color:#d7b97c}
+.boss-hero h1{margin:6px 0 8px;font-size:34px;line-height:1.05}
+.boss-hero p{margin:0;max-width:660px;color:#e8dfd0}
+.boss-hero-icon{
+  width:74px;height:74px;min-width:74px;border-radius:22px;display:flex;align-items:center;justify-content:center;
+  background:#d7b97c;color:#111;font-size:34px
+}
+.boss-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.boss-card{
+  overflow:hidden;border:1px solid #e6dcc7;border-radius:20px;background:#fff;
+  box-shadow:0 8px 24px rgba(35,27,16,.05)
+}
+.boss-card-image{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#f2eadc}
+.boss-card-body{padding:18px}
+.boss-card-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
+.boss-card-meta span{font-size:11px;font-weight:900;letter-spacing:.14em;color:#a87424}
+.boss-card-meta strong{
+  font-size:10px;letter-spacing:.08em;padding:5px 8px;border-radius:999px;background:#f3e5bf;color:#74500f
+}
+.boss-card h2{margin:0 0 10px;font-size:21px;line-height:1.25}
+.boss-card p{margin:10px 0 16px;color:#5f584f;line-height:1.6}
+.boss-date{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:10px;background:#f8f3e8;color:#5e4a25;font-size:12px;font-weight:800}
+.boss-cta{width:100%;margin-top:2px}
+@media(max-width:760px){
+  .boss-hero{padding:20px;border-radius:18px;align-items:flex-start}
+  .boss-hero h1{font-size:27px}
+  .boss-hero-icon{width:56px;height:56px;min-width:56px;border-radius:16px;font-size:26px}
+  .boss-grid{grid-template-columns:1fr}
+}

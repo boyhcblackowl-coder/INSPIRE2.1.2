@@ -1,4 +1,4 @@
-const CACHE = 'inspire-2-1-2-v1-6-1-handbook-visual-fix';
+const CACHE = 'inspire-2-1-2-v1-7-content-cms';
 const BASE = '/INSPIRE2.1.2/';
 
 const SHELL = [
