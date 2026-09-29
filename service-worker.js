@@ -1,4 +1,4 @@
-const CACHE = 'inspire-2-1-2-v1-5-native-handbook';
+const CACHE = 'inspire-2-1-2-v1-6-visual-handbook';
 const BASE = '/INSPIRE2.1.2/';
 
 const SHELL = [

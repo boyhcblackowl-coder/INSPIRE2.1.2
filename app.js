@@ -405,10 +405,153 @@ function renderHandbookChapter_(chapterId, needle){
       '<div class="handbook-chapter-no">CHAPTER '+String(Number(ch.no||0)).padStart(2,'0')+'</div>'+
       '<h1>'+esc(ch.title||'')+'</h1>'+
       '<div class="handbook-divider"></div>'+
-      '<div class="handbook-prose">'+renderHandbookBlocks_(ch.blocks||[],needle||'')+'</div>'+
+      '<div class="handbook-prose">'+(Number(ch.no||0)===3?renderGroomingChapter_(ch.blocks||[],needle||''):renderHandbookBlocks_(ch.blocks||[],needle||''))+'</div>'+
       handbookChapterNav_(ch.no)+
     '</article>';
 }
+
+
+/* =========================================================
+   VISUAL GROOMING GUIDE — CHAPTER 03
+   Preserves handbook wording; improves presentation only.
+   ========================================================= */
+
+function groomingVisualMap_(){
+  return {
+    'floor-room':[
+      {src:'assets/handbook/penampilan-diri/floor-supervisor-expediter.jpg',caption:'Floor & Room — Supervisor / Expediter'},
+      {src:'assets/handbook/penampilan-diri/floor-server.jpg',caption:'Floor & Room — Server'}
+    ],
+    'gro':[
+      {src:'assets/handbook/penampilan-diri/gro-staff.jpg',caption:'Guest Relation Officer (GRO)'},
+      {src:'assets/handbook/penampilan-diri/gro-supervisor-pa.jpg',caption:'GRO — Supervisor / Personal Assistant'}
+    ],
+    'cashier':[
+      {src:'assets/handbook/penampilan-diri/cashier.jpg',caption:'Cashier'}
+    ],
+    'bar-shisha':[
+      {src:'assets/handbook/penampilan-diri/bartender.jpg',caption:'Bartender'},
+      {src:'assets/handbook/penampilan-diri/bar-shisha.jpg',caption:'Bar & Shisha'}
+    ],
+    'kitchen':[
+      {src:'assets/handbook/penampilan-diri/kitchen.jpg',caption:'Kitchen / Steward'}
+    ],
+    'housekeeping':[
+      {src:'assets/handbook/penampilan-diri/housekeeping.jpg',caption:'Housekeeping'}
+    ],
+    'guard':[
+      {src:'assets/handbook/penampilan-diri/guard.jpg',caption:'Guard'}
+    ],
+    'central-kitchen':[
+      {src:'assets/handbook/penampilan-diri/central-kitchen.jpg',caption:'Central Kitchen'}
+    ]
+  };
+}
+
+function groomingSectionKey_(text){
+  var t=String(text||'').toLowerCase().replace(/\s+/g,' ').trim();
+  t=t.replace(/^\d+[\.\)]\s*/,'');
+  if(t.indexOf('floor dan room')===0 || t.indexOf('floor & room')===0)return 'floor-room';
+  if(t.indexOf('guest relation officer')===0 || t==='gro')return 'gro';
+  if(t.indexOf('cashier')===0)return 'cashier';
+  if(t.indexOf('bar & shisha')===0 || t.indexOf('bar dan shisha')===0)return 'bar-shisha';
+  if(t.indexOf('central kitchen')===0)return 'central-kitchen';
+  if(t.indexOf('kitchen')===0)return 'kitchen';
+  if(t.indexOf('housekeeping')===0)return 'housekeeping';
+  if(t.indexOf('guard')===0)return 'guard';
+  return '';
+}
+
+function groomingSectionLabel_(key){
+  return {
+    'floor-room':'Floor & Room (Service)',
+    'gro':'Guest Relation Officer (GRO)',
+    'cashier':'Cashier',
+    'bar-shisha':'Bar & Shisha',
+    'kitchen':'Kitchen',
+    'housekeeping':'Housekeeping',
+    'guard':'Guard',
+    'central-kitchen':'Central Kitchen'
+  }[key]||key;
+}
+
+function renderGroomingGallery_(key){
+  var items=(groomingVisualMap_()[key]||[]);
+  if(!items.length)return '';
+  return '<div class="grooming-visual-label"><span>VISUAL REFERENCE</span><small>Referensi dari Employee Handbook resmi</small></div>'+
+    '<div class="grooming-gallery">'+items.map(function(x){
+      return '<figure class="grooming-visual-card">'+
+        '<button class="grooming-image-button" onclick="openGroomingImage_(\''+arg(x.src)+'\',\''+arg(x.caption)+'\')" aria-label="Open '+esc(x.caption)+'">'+
+          '<img src="'+esc(x.src)+'" alt="'+esc(x.caption)+'" loading="lazy">'+
+        '</button>'+
+        '<figcaption>'+esc(x.caption)+'</figcaption>'+
+      '</figure>';
+    }).join('')+'</div>';
+}
+
+function openGroomingImage_(src,caption){
+  openModal('<div class="grooming-image-modal">'+
+    '<div class="eyebrow">VISUAL REFERENCE</div><h2>'+esc(caption||'Penampilan Diri')+'</h2>'+
+    '<img src="'+esc(src)+'" alt="'+esc(caption||'Penampilan Diri')+'">'+
+    '<p class="muted">Referensi visual dari Employee Handbook Black Owl Indonesia.</p>'+
+  '</div>');
+}
+
+function scrollGroomingSection_(key){
+  var el=document.getElementById('grooming-'+key);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderGroomingChapter_(blocks,needle){
+  var keys=['floor-room','gro','cashier','bar-shisha','kitchen','housekeeping','guard','central-kitchen'];
+  var intro=[];
+  var groups={};
+  keys.forEach(function(k){groups[k]=[]});
+  var current='';
+
+  (blocks||[]).forEach(function(b){
+    var text=String(b.text||'').trim();
+    if(!text)return;
+    var key=groomingSectionKey_(text);
+    if(key){
+      current=key;
+      return;
+    }
+    if(current)groups[current].push(b);
+    else intro.push(b);
+  });
+
+  var quickNav='<div class="grooming-quick-wrap">'+
+    '<div class="grooming-quick-title"><span>QUICK GUIDE</span><strong>Pilih area kerja</strong></div>'+
+    '<div class="grooming-quick-nav">'+keys.map(function(k){
+      return '<button onclick="scrollGroomingSection_(\''+k+'\')">'+esc(groomingSectionLabel_(k))+' <span>↓</span></button>';
+    }).join('')+'</div>'+
+  '</div>';
+
+  var introHtml='<div class="grooming-intro">'+
+    '<div class="grooming-intro-icon">✨</div>'+
+    '<div><div class="eyebrow">PERSONAL APPEARANCE STANDARD</div>'+
+    '<h2>Look neat. Feel confident. Represent Black Owl.</h2>'+
+    '<div class="grooming-intro-copy">'+renderHandbookBlocks_(intro,needle||'')+'</div>'+
+    '<div class="grooming-note">Visual membantu sebagai referensi. Ketentuan tertulis pada Employee Handbook tetap menjadi acuan utama.</div>'+
+    '</div></div>';
+
+  var sections=keys.map(function(k,index){
+    var list=groups[k]||[];
+    if(!list.length && !(groomingVisualMap_()[k]||[]).length)return '';
+    return '<section class="grooming-section" id="grooming-'+k+'">'+
+      '<div class="grooming-section-head">'+
+        '<span class="grooming-section-no">'+String(index+1).padStart(2,'0')+'</span>'+
+        '<div><div class="eyebrow">GROOMING STANDARD</div><h2>'+esc(groomingSectionLabel_(k))+'</h2></div>'+
+      '</div>'+
+      renderGroomingGallery_(k)+
+      '<div class="grooming-rules">'+renderHandbookBlocks_(list,needle||'')+'</div>'+
+    '</section>';
+  }).join('');
+
+  return quickNav+introHtml+sections;
+}
+
 
 function renderHandbookBlocks_(blocks,needle){
   var html='',listOpen=false;
