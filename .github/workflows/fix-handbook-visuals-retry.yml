@@ -1,0 +1,33 @@
+name: Fix Handbook Visual Mapping Retry
+on:
+  push:
+    branches: [hotfix-v1.6.1-handbook-visuals]
+    paths:
+      - ".github/workflows/fix-handbook-visuals-retry.yml"
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: hotfix-v1.6.1-handbook-visuals
+      - name: Replace four handbook visuals with verified source images
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/handbook/penampilan-diri
+          curl -L --fail --retry 3 'https://lh7-rt.googleusercontent.com/docsz/AD_4nXdomWSNJJvQ-3fbCuY0SIPESiKM-TttiCJI7kScgnXjUQLXskjmIYH23AF_0B8hEpm-7Fscsbhi04y83IyewbDA18j50cA2CFNByphmMpti20pzawGPxBKn4Q0cQ_87CvyJlO5ioTHZFlK0F0Z2ob6KGPbA5w=s2048?key=P3nEgFfFZ5qTNywk53SOGg' -o assets/handbook/penampilan-diri/kitchen.jpg
+          curl -L --fail --retry 3 'https://lh7-rt.googleusercontent.com/docsz/AD_4nXdsW_-AvkAntI9Gzz3t0vi6rJxiRxujzs6UwvOu_FVPktEDWTMF2_Gd7P3MLEFrXN_8nLcsmU14bMZOMK8o0YAd6kzN7FkzLzvHVBEDCYio20tGEH3K_ClHeyy27S9kTyyUPEJVvzby6p_O0b3LlJr7sWzEIg=s2048?key=P3nEgFfFZ5qTNywk53SOGg' -o assets/handbook/penampilan-diri/housekeeping.jpg
+          curl -L --fail --retry 3 'https://lh7-rt.googleusercontent.com/docsz/AD_4nXchFJ1pZaB9nPED7wY28I1Wzu19ZG4-o0euSRQvxeTtnV2ynTjkie6Wyvm6Ya0b39jFA_O9-YyBszDklUbrjDZWuSQwyIF400GaiwYZc76b003KBWMCqahlizF-MWCF_wlZCviTsdzE4Tl3P7-vo0Ae5-7cIQ=s2048?key=P3nEgFfFZ5qTNywk53SOGg' -o assets/handbook/penampilan-diri/guard.jpg
+          curl -L --fail --retry 3 'https://lh7-rt.googleusercontent.com/docsz/AD_4nXc7A_g_pQiUAVPgZEOhJfWw3-VdcuV7Rx40CfFEe2IvpnkLBYxqWUCShJJZvwCrNP9oWNLjSB3N8cfzF_geaYZEN52VfEYnz-F-3_pasQmICrHOZjSlT-xgj8Xp6JqO71Lv-F0t3ZTXb5xQHfM3CKgV9I0=s2048?key=P3nEgFfFZ5qTNywk53SOGg' -o assets/handbook/penampilan-diri/central-kitchen.jpg
+          file assets/handbook/penampilan-diri/*.jpg
+      - name: Commit corrected image assets
+        shell: bash
+        run: |
+          git config user.name "inspire-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add assets/handbook/penampilan-diri/kitchen.jpg                   assets/handbook/penampilan-diri/housekeeping.jpg                   assets/handbook/penampilan-diri/guard.jpg                   assets/handbook/penampilan-diri/central-kitchen.jpg
+          git commit -m "Correct four visual handbook assets"
+          git push origin HEAD:hotfix-v1.6.1-handbook-visuals
