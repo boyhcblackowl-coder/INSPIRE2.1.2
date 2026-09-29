@@ -1,13 +1,17 @@
 /* =========================================================
-   INSPIRE V1.4 ADD-ON
+   INSPIRE V1.5 ADD-ON
    Add this as a NEW .gs file in the existing Apps Script project.
    Do NOT replace login/session/security functions in Code.gs.
    Requires existing helpers from INSPIRE V5:
    requireSession_, rows_, sheet_, id_, audit_, clean_, formatDate_
    ========================================================= */
 
-function getEmployeeCenterData(sessionToken) {
+function getEmployeeCenterData(sessionToken, mode) {
   var s = requireSession_(sessionToken);
+
+  if (String(mode || '').toUpperCase() === 'HANDBOOK') {
+    return getHandbookData_();
+  }
   var emp = s.employee;
   var role = String(emp.ROLE || 'USER').toUpperCase();
   var division = String(emp.DIVISION || '').toUpperCase();
@@ -353,4 +357,70 @@ function inspireScopeAllowed_(rawScope, currentValue) {
   var items = raw.toUpperCase().split('|').map(function(v){return String(v || '').trim();}).filter(Boolean);
   if (!items.length || items.indexOf('ALL') >= 0 || items.indexOf('*') >= 0) return true;
   return items.indexOf(String(currentValue || '').toUpperCase()) >= 0;
+}
+
+
+/* =========================================================
+   NATIVE EMPLOYEE HANDBOOK — V1.5
+   Uses the existing getEmployeeCenterData endpoint:
+   getEmployeeCenterData(sessionToken, 'HANDBOOK')
+   ========================================================= */
+
+function getHandbookData_() {
+  var metaRows = rows_('Handbook_Meta');
+  var meta = {};
+
+  metaRows.forEach(function(r){
+    var key = String(r.KEY || '').trim();
+    if (key) meta[key] = r.VALUE || '';
+  });
+
+  var rows = rows_('Handbook_Blocks')
+    .filter(function(r){ return String(r.ENABLED || '').toUpperCase() === 'TRUE'; })
+    .sort(function(a,b){ return Number(a.SORT_ORDER || 999999) - Number(b.SORT_ORDER || 999999); });
+
+  var chaptersById = {};
+  var chapterOrder = [];
+
+  rows.forEach(function(r){
+    var chapterId = String(r.CHAPTER_ID || '');
+    if (!chapterId) return;
+
+    if (!chaptersById[chapterId]) {
+      chaptersById[chapterId] = {
+        id: chapterId,
+        no: Number(r.CHAPTER_NO || 0),
+        title: r.CHAPTER_TITLE || '',
+        blocks: []
+      };
+      chapterOrder.push(chapterId);
+    }
+
+    chaptersById[chapterId].blocks.push({
+      id: r.BLOCK_ID || '',
+      type: r.BLOCK_TYPE || 'PARAGRAPH',
+      text: r.BLOCK_TEXT || '',
+      sortOrder: Number(r.SORT_ORDER || 0),
+      sourceStartIndex: Number(r.SOURCE_START_INDEX || 0),
+      sourceEndIndex: Number(r.SOURCE_END_INDEX || 0)
+    });
+  });
+
+  var chapters = chapterOrder
+    .map(function(id){ return chaptersById[id]; })
+    .sort(function(a,b){ return a.no - b.no; });
+
+  return {
+    meta: {
+      title: meta.TITLE || 'EMPLOYEE HANDBOOK',
+      company: meta.COMPANY || 'BLACK OWL INDONESIA',
+      division: meta.DIVISION || '',
+      version: meta.VERSION || '',
+      effectiveDate: meta.EFFECTIVE_DATE || '',
+      sourceUrl: meta.SOURCE_URL || '',
+      sourceRevisionId: meta.SOURCE_REVISION_ID || '',
+      lastSyncedAt: meta.LAST_SYNCED_AT || ''
+    },
+    chapters: chapters
+  };
 }

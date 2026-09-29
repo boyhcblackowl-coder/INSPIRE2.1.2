@@ -216,3 +216,103 @@ button.home-feature-card{width:100%;cursor:pointer}
   .epiic-card{min-height:auto}
   .learning-toolbar{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   INSPIRE V1.5 — NATIVE EMPLOYEE HANDBOOK
+   ========================================================= */
+.handbook-hero{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  background:radial-gradient(circle at 90% 0%,rgba(215,185,124,.24),transparent 34%),linear-gradient(135deg,#090A0B,#26231E);
+  color:#fff;border:1px solid rgba(215,185,124,.18);border-radius:24px;padding:25px 27px;
+  box-shadow:var(--shadow)
+}
+.handbook-hero h1{margin:6px 0 5px;font-size:30px;letter-spacing:.02em}
+.handbook-hero p{margin:0;color:#D9CFBD;font-size:11px}
+.handbook-badge{
+  width:60px;height:60px;border-radius:18px;background:#D7B97C;color:#0C0D0F;
+  display:flex;align-items:center;justify-content:center;font-size:28px;flex:0 0 auto
+}
+.handbook-layout{
+  display:grid;grid-template-columns:minmax(235px,310px) minmax(0,1fr);gap:16px;margin-top:16px;align-items:start
+}
+.handbook-sidebar{
+  position:sticky;top:18px;background:var(--white);border:1px solid var(--line);border-radius:18px;
+  padding:14px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto
+}
+.handbook-search{
+  display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:12px;padding:0 10px;background:#FBF8F1
+}
+.handbook-search input{width:100%;border:0;background:transparent;outline:0;padding:11px 0;font-size:11px}
+.handbook-search-results{
+  margin-top:9px;border:1px solid var(--line);border-radius:12px;background:#fff;max-height:330px;overflow:auto;padding:6px
+}
+.handbook-result-count{font-size:9px;font-weight:900;color:#8A7757;padding:6px 7px 8px}
+.handbook-result{
+  width:100%;border:0;background:transparent;border-radius:9px;padding:8px;text-align:left;color:var(--text)
+}
+.handbook-result:hover{background:#F7F0E3}
+.handbook-result strong,.handbook-result span{display:block}
+.handbook-result strong{font-size:9px;color:#6B5227;line-height:1.35}
+.handbook-result span{font-size:9px;color:var(--muted);line-height:1.45;margin-top:3px}
+.handbook-no-result{font-size:10px;color:var(--muted);padding:10px}
+.handbook-toc-title{font-size:9px;font-weight:950;letter-spacing:.12em;color:#A7813E;margin:14px 5px 7px}
+.handbook-toc{display:flex;flex-direction:column;gap:4px}
+.handbook-toc-item{
+  width:100%;display:grid;grid-template-columns:32px 1fr;gap:9px;align-items:start;text-align:left;
+  border:1px solid transparent;background:transparent;border-radius:10px;padding:8px;color:var(--text)
+}
+.handbook-toc-item:hover{background:#F8F3E9}.handbook-toc-item.active{background:#F1E5CC;border-color:#DFC996}
+.handbook-toc-item span{
+  width:28px;height:28px;border-radius:9px;background:#EEE4D1;color:#6B5227;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:950
+}
+.handbook-toc-item.active span{background:#D7B97C;color:#0C0D0F}
+.handbook-toc-item strong{font-size:10px;line-height:1.35;padding-top:3px}
+.handbook-source{
+  width:100%;margin-top:11px;border:1px solid var(--line);background:#FBF8F1;color:#6B5227;
+  border-radius:11px;padding:10px;font-size:9px;font-weight:900
+}
+.handbook-content{min-width:0}
+.handbook-chapter{
+  background:var(--white);border:1px solid var(--line);border-radius:20px;padding:28px 30px;box-shadow:var(--shadow)
+}
+.handbook-chapter-no{font-size:10px;letter-spacing:.13em;color:#B58A42;font-weight:950}
+.handbook-chapter>h1{font-size:30px;line-height:1.18;margin:8px 0 15px;max-width:900px}
+.handbook-divider{width:74px;height:3px;border-radius:999px;background:#D7B97C;margin:0 0 24px}
+.handbook-prose{font-size:13px;line-height:1.75;color:#2D2923}
+.handbook-prose p{margin:0 0 15px}
+.handbook-prose h2{
+  margin:28px 0 10px;font-size:19px;line-height:1.35;color:#111214;padding-top:4px
+}
+.handbook-prose ul{margin:8px 0 17px;padding-left:22px}
+.handbook-prose li{margin:6px 0;padding-left:3px}
+.handbook-prose mark{background:#F4D99B;color:#241B0D;padding:0 2px;border-radius:3px}
+.handbook-chapter-nav{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:30px;padding-top:20px;border-top:1px solid var(--line)
+}
+.handbook-chapter-nav .secondary,.handbook-chapter-nav .primary{
+  width:100%;min-height:46px;text-align:center;white-space:normal;line-height:1.3
+}
+
+@media(max-width:900px){
+  .handbook-layout{grid-template-columns:220px minmax(0,1fr)}
+  .handbook-chapter{padding:23px}
+}
+@media(max-width:760px){
+  .handbook-hero{padding:19px;border-radius:20px}.handbook-hero h1{font-size:24px}.handbook-badge{width:49px;height:49px;font-size:23px}
+  .handbook-layout{grid-template-columns:1fr}
+  .handbook-sidebar{position:relative;top:auto;max-height:none;padding:12px}
+  .handbook-toc{
+    flex-direction:row;overflow:auto;gap:7px;padding-bottom:5px;scroll-snap-type:x proximity
+  }
+  .handbook-toc-item{
+    min-width:210px;grid-template-columns:30px 1fr;border:1px solid var(--line);background:#FBF8F1;scroll-snap-align:start
+  }
+  .handbook-content{scroll-margin-top:12px}
+  .handbook-chapter{padding:19px 17px;border-radius:18px}
+  .handbook-chapter>h1{font-size:23px}
+  .handbook-prose{font-size:12px;line-height:1.68}
+  .handbook-prose h2{font-size:17px;margin-top:24px}
+  .handbook-chapter-nav{grid-template-columns:1fr}
+}

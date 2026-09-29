@@ -1,4 +1,4 @@
-var data=null, token='', activeRoute='home', lastLoginPin='', employeeCenterCache=null, communityCache=null, learningCache=null;
+var data=null, token='', activeRoute='home', lastLoginPin='', employeeCenterCache=null, communityCache=null, learningCache=null, handbookCache=null, handbookActiveChapter='';
 var TOKEN_KEY='inspire_session_v4', CLIENT_KEY='inspire_client_key_v4';
 
 function q(s){return document.querySelector(s)}
@@ -288,6 +288,7 @@ function ecResourceCard_(r){
 }
 
 function openEmployeeResourceDetail(id){
+  if(String(id||'').toUpperCase()==='HANDBOOK'){openHandbook();return}
   var list=(employeeCenterCache&&employeeCenterCache.resources)||[];
   var r=list.find(function(x){return String(x.id)===String(id)});
   if(!r){toast('Resource not found.');return}
@@ -322,6 +323,199 @@ function resourceActionButton_(label,url,primary){
   if(!String(url||'').trim()) return '<button class="'+cls+'" onclick="toast(\''+arg(label)+' is being prepared.\')">'+esc(label)+'</button>';
   return '<button class="'+cls+'" onclick="openExternal_(\''+arg(url)+'\')">'+esc(label)+'</button>';
 }
+
+
+
+/* =========================================================
+   NATIVE EMPLOYEE HANDBOOK — V1.5
+   ========================================================= */
+
+async function openHandbook(force){
+  var root=q('#content');
+  root.innerHTML=loadingBlock_('EMPLOYEE HANDBOOK','Black Owl Indonesia','Loading Employee Handbook…');
+
+  try{
+    if(force||!handbookCache) handbookCache=await server('getEmployeeCenterData',token,'HANDBOOK');
+    var chapters=(handbookCache&&handbookCache.chapters)||[];
+    if(!handbookActiveChapter && chapters.length) handbookActiveChapter=chapters[0].id;
+    root.innerHTML=handbookPage_(handbookCache);
+    renderHandbookChapter_(handbookActiveChapter);
+  }catch(e){
+    handle(e);
+    root.innerHTML=errorBlock_('EMPLOYEE HANDBOOK','Unable to load Employee Handbook',e,'handbookCache=null;openHandbook(true)');
+  }
+}
+
+function handbookPage_(d){
+  var meta=(d&&d.meta)||{};
+  var chapters=(d&&d.chapters)||[];
+
+  return '<button class="back-link" onclick="renderEmployeeCenter()">‹ Back to Employee Center</button>'+
+    '<section class="handbook-hero">'+
+      '<div><div class="eyebrow">EMPLOYEE HANDBOOK</div>'+
+      '<h1>'+esc(meta.title||'EMPLOYEE HANDBOOK')+'</h1>'+
+      '<p>'+esc(meta.company||'BLACK OWL INDONESIA')+' · '+esc(meta.version||'')+
+        (meta.effectiveDate?' · Effective '+esc(meta.effectiveDate):'')+'</p></div>'+
+      '<div class="handbook-badge">📖</div>'+
+    '</section>'+
+    '<section class="handbook-layout">'+
+      '<aside class="handbook-sidebar">'+
+        '<div class="handbook-search"><span>⌕</span><input id="handbookSearch" placeholder="Search handbook…" oninput="searchHandbook_()"></div>'+
+        '<div id="handbookSearchResults" class="handbook-search-results hidden"></div>'+
+        '<div class="handbook-toc-title">TABLE OF CONTENTS</div>'+
+        '<div class="handbook-toc">'+chapters.map(handbookTocButton_).join('')+'</div>'+
+        (meta.sourceUrl?'<button class="handbook-source" onclick="openExternal_(\''+arg(meta.sourceUrl)+'\')">Open Original Document ↗</button>':'')+
+      '</aside>'+
+      '<main id="handbookContent" class="handbook-content"></main>'+
+    '</section>';
+}
+
+function handbookTocButton_(ch){
+  var active=String(ch.id)===String(handbookActiveChapter)?' active':'';
+  return '<button class="handbook-toc-item'+active+'" data-handbook-chapter="'+esc(ch.id)+'" onclick="openHandbookChapter_(\''+arg(ch.id)+'\')">'+
+    '<span>'+String(Number(ch.no||0)).padStart(2,'0')+'</span><strong>'+esc(ch.title||'Chapter')+'</strong></button>';
+}
+
+function openHandbookChapter_(chapterId){
+  handbookActiveChapter=chapterId;
+  qa('[data-handbook-chapter]').forEach(function(b){
+    b.classList.toggle('active',b.getAttribute('data-handbook-chapter')===chapterId);
+  });
+  var search=q('#handbookSearch');
+  if(search && search.value) search.value='';
+  var sr=q('#handbookSearchResults');
+  if(sr){sr.classList.add('hidden');sr.innerHTML=''}
+  renderHandbookChapter_(chapterId);
+  if(window.innerWidth<760){
+    var target=q('#handbookContent');
+    if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+function renderHandbookChapter_(chapterId, needle){
+  var root=q('#handbookContent');
+  if(!root)return;
+  var chapters=(handbookCache&&handbookCache.chapters)||[];
+  var ch=chapters.find(function(x){return String(x.id)===String(chapterId)});
+  if(!ch){root.innerHTML='<div class="card">Chapter not found.</div>';return}
+
+  handbookActiveChapter=ch.id;
+  root.innerHTML=
+    '<article class="handbook-chapter">'+
+      '<div class="handbook-chapter-no">CHAPTER '+String(Number(ch.no||0)).padStart(2,'0')+'</div>'+
+      '<h1>'+esc(ch.title||'')+'</h1>'+
+      '<div class="handbook-divider"></div>'+
+      '<div class="handbook-prose">'+renderHandbookBlocks_(ch.blocks||[],needle||'')+'</div>'+
+      handbookChapterNav_(ch.no)+
+    '</article>';
+}
+
+function renderHandbookBlocks_(blocks,needle){
+  var html='',listOpen=false;
+  (blocks||[]).forEach(function(b){
+    var type=String(b.type||'PARAGRAPH').toUpperCase();
+    if(type==='CHAPTER')return;
+
+    if(type==='LIST_ITEM'){
+      if(!listOpen){html+='<ul>';listOpen=true}
+      html+='<li>'+highlightHandbook_(b.text||'',needle)+'</li>';
+      return;
+    }
+
+    if(listOpen){html+='</ul>';listOpen=false}
+
+    if(type==='SUBHEADING'){
+      html+='<h2>'+highlightHandbook_(b.text||'',needle)+'</h2>';
+    }else{
+      html+='<p>'+highlightHandbook_(b.text||'',needle)+'</p>';
+    }
+  });
+  if(listOpen) html+='</ul>';
+  return html;
+}
+
+function handbookChapterNav_(currentNo){
+  var chapters=(handbookCache&&handbookCache.chapters)||[];
+  var idx=chapters.findIndex(function(x){return Number(x.no)===Number(currentNo)});
+  var prev=idx>0?chapters[idx-1]:null;
+  var next=idx>=0&&idx<chapters.length-1?chapters[idx+1]:null;
+  return '<div class="handbook-chapter-nav">'+
+    (prev?'<button class="secondary" onclick="openHandbookChapter_(\''+arg(prev.id)+'\')">← '+esc(prev.title)+'</button>':'<span></span>')+
+    (next?'<button class="primary" onclick="openHandbookChapter_(\''+arg(next.id)+'\')">'+esc(next.title)+' →</button>':'')+
+  '</div>';
+}
+
+function searchHandbook_(){
+  var input=q('#handbookSearch');
+  var box=q('#handbookSearchResults');
+  if(!input||!box)return;
+
+  var term=String(input.value||'').trim().toLowerCase();
+  if(term.length<2){
+    box.classList.add('hidden');
+    box.innerHTML='';
+    return;
+  }
+
+  var hits=[];
+  ((handbookCache&&handbookCache.chapters)||[]).forEach(function(ch){
+    (ch.blocks||[]).forEach(function(b){
+      var text=String(b.text||'');
+      if(text.toLowerCase().indexOf(term)>=0){
+        hits.push({chapter:ch,block:b,text:text});
+      }
+    });
+  });
+
+  hits=hits.slice(0,40);
+  box.classList.remove('hidden');
+  box.innerHTML=
+    '<div class="handbook-result-count">'+hits.length+(hits.length===40?' top':'')+' result'+(hits.length===1?'':'s')+'</div>'+
+    (hits.length?hits.map(function(h){
+      return '<button class="handbook-result" onclick="openHandbookSearchResult_(\''+arg(h.chapter.id)+'\',\''+arg(input.value)+'\')">'+
+        '<strong>'+String(Number(h.chapter.no||0)).padStart(2,'0')+' · '+esc(h.chapter.title)+'</strong>'+
+        '<span>'+esc(handbookExcerpt_(h.text,term))+'</span></button>';
+    }).join(''):'<div class="handbook-no-result">No matching handbook content.</div>');
+}
+
+function handbookExcerpt_(text,term){
+  var raw=String(text||''),low=raw.toLowerCase(),at=low.indexOf(String(term||'').toLowerCase());
+  if(at<0)return raw.slice(0,150);
+  var start=Math.max(0,at-55),end=Math.min(raw.length,at+String(term||'').length+95);
+  return (start>0?'…':'')+raw.slice(start,end)+(end<raw.length?'…':'');
+}
+
+function openHandbookSearchResult_(chapterId,term){
+  handbookActiveChapter=chapterId;
+  qa('[data-handbook-chapter]').forEach(function(b){
+    b.classList.toggle('active',b.getAttribute('data-handbook-chapter')===chapterId);
+  });
+  renderHandbookChapter_(chapterId,term||'');
+  var target=q('#handbookContent');
+  if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function highlightHandbook_(text,needle){
+  var safe=esc(text||'');
+  var n=String(needle||'').trim();
+  if(!n)return safe;
+  try{
+    var re=new RegExp('('+escapeRegExp_(n)+')','ig');
+    return safe.replace(re,'<mark>$1</mark>');
+  }catch(_){return safe}
+}
+
+function escapeRegExp_(s){
+  var specials='\\\\^$.*+?()[]{}|';
+  return String(s||'').split('').map(function(ch){
+    return specials.indexOf(ch)>=0?'\\\\'+ch:ch;
+  }).join('');
+}
+
+/* =========================================================
+   COMMUNITY PILOT');
+}
+
 
 
 /* =========================================================
@@ -595,7 +789,7 @@ async function savePin(){
   try{await server('changePin',token,o,n);closeModal();toast('PIN updated.');await loadApp()}catch(e){handle(e)}
 }
 async function doLogout(){try{await server('logout',token)}catch(e){}clearSession();closeModal();showLogin()}
-function clearSession(){token='';data=null;lastLoginPin='';employeeCenterCache=null;communityCache=null;learningCache=null;localStorage.removeItem(TOKEN_KEY)}
+function clearSession(){token='';data=null;lastLoginPin='';employeeCenterCache=null;communityCache=null;learningCache=null;handbookCache=null;handbookActiveChapter='';localStorage.removeItem(TOKEN_KEY)}
 function togglePin(){var x=q('#pin'),b=x.nextElementSibling;x.type=x.type==='password'?'text':'password';b.textContent=x.type==='password'?'Show':'Hide'}
 function installText(){return /iphone|ipad|ipod/i.test(navigator.userAgent)?'Safari → Share → Add to Home Screen.':'Chrome → menu ⋮ → Add to Home screen / Install app.'}
 function openModal(h){q('#modalBody').innerHTML=h;q('#modal').classList.remove('hidden')}
