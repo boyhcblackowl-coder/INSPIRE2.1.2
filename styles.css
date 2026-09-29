@@ -316,3 +316,84 @@ button.home-feature-card{width:100%;cursor:pointer}
   .handbook-prose h2{font-size:17px;margin-top:24px}
   .handbook-chapter-nav{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   V1.6 — VISUAL EMPLOYEE HANDBOOK / PENAMPILAN DIRI
+   ========================================================= */
+.grooming-quick-wrap{
+  margin:0 0 22px;padding:18px;border:1px solid #ead8b0;border-radius:18px;
+  background:linear-gradient(135deg,#fffaf0 0%,#f8f1e4 100%);
+}
+.grooming-quick-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.grooming-quick-title span,.grooming-visual-label span{font-size:11px;font-weight:900;letter-spacing:.14em;color:#a87424}
+.grooming-quick-title strong{font-size:15px;color:#171717}
+.grooming-quick-nav{display:flex;gap:8px;flex-wrap:wrap}
+.grooming-quick-nav button{
+  border:1px solid #dfc997;background:#fff;color:#24201a;border-radius:999px;padding:9px 12px;
+  font:inherit;font-size:12px;font-weight:800;cursor:pointer;transition:.18s ease;
+}
+.grooming-quick-nav button:hover{transform:translateY(-1px);border-color:#c99a3c;background:#fff7e5}
+.grooming-quick-nav button span{color:#b3832f;margin-left:4px}
+.grooming-intro{
+  display:grid;grid-template-columns:52px 1fr;gap:16px;margin:0 0 24px;padding:22px;
+  border-radius:20px;background:#111;color:#f7f1e6;box-shadow:0 12px 30px rgba(17,17,17,.08);
+}
+.grooming-intro-icon{
+  width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:#d7b97c;color:#111;font-size:23px
+}
+.grooming-intro .eyebrow{color:#d7b97c}
+.grooming-intro h2{margin:4px 0 12px;font-size:22px;line-height:1.2;color:#fff}
+.grooming-intro-copy p,.grooming-intro-copy li{color:#eee6d8}
+.grooming-intro-copy p:first-child{margin-top:0}
+.grooming-note{
+  margin-top:14px;padding:11px 13px;border-radius:12px;background:rgba(215,185,124,.12);
+  border:1px solid rgba(215,185,124,.28);font-size:12px;line-height:1.5;color:#ead9b8
+}
+.grooming-section{
+  scroll-margin-top:24px;margin:0 0 22px;padding:22px;border:1px solid #e6d8bd;border-radius:20px;
+  background:#fffdf9;box-shadow:0 8px 24px rgba(35,27,16,.04)
+}
+.grooming-section-head{display:flex;gap:13px;align-items:center;margin-bottom:17px}
+.grooming-section-no{
+  flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:#ead7a9;color:#704a0d;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px
+}
+.grooming-section-head h2{margin:3px 0 0;font-size:21px;line-height:1.2;color:#111}
+.grooming-visual-label{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;margin:4px 0 10px;padding-top:4px
+}
+.grooming-visual-label small{font-size:11px;color:#8a8175}
+.grooming-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 18px}
+.grooming-gallery:has(.grooming-visual-card:only-child){grid-template-columns:minmax(0,520px)}
+.grooming-visual-card{
+  margin:0;overflow:hidden;border:1px solid #e8ddc9;border-radius:16px;background:#f6f0e5
+}
+.grooming-image-button{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in}
+.grooming-visual-card img{
+  display:block;width:100%;height:auto;max-height:420px;object-fit:contain;background:#eee5d6
+}
+.grooming-visual-card figcaption{
+  padding:10px 12px;background:#fff;font-size:12px;font-weight:800;color:#332b20;border-top:1px solid #e8ddc9
+}
+.grooming-rules{padding-top:2px}
+.grooming-rules p{margin:0 0 10px}
+.grooming-rules ul{margin:8px 0 14px;padding-left:23px}
+.grooming-rules li{margin:7px 0;line-height:1.55}
+.grooming-rules li::marker{color:#b98935}
+.grooming-image-modal{text-align:left}
+.grooming-image-modal h2{margin:4px 0 14px}
+.grooming-image-modal img{
+  display:block;max-width:100%;max-height:72vh;margin:0 auto;border-radius:14px;object-fit:contain;background:#f5efe4
+}
+@media(max-width:760px){
+  .grooming-quick-wrap,.grooming-section{padding:15px;border-radius:16px}
+  .grooming-quick-nav{display:grid;grid-template-columns:1fr 1fr}
+  .grooming-quick-nav button{text-align:left;padding:10px;font-size:11px}
+  .grooming-intro{grid-template-columns:1fr;padding:17px}
+  .grooming-intro-icon{width:44px;height:44px}
+  .grooming-intro h2{font-size:19px}
+  .grooming-gallery,.grooming-gallery:has(.grooming-visual-card:only-child){grid-template-columns:1fr}
+  .grooming-visual-label{align-items:flex-start;flex-direction:column;gap:3px}
+}
