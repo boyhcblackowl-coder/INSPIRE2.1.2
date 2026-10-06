@@ -142,6 +142,8 @@ function home(){
       homeCarousel_()+
     '</section>'+
 
+    homeLegacyCulture_()+
+
     '<section class="home-v191-light-zone">'+
       '<div class="page-head home-section-head"><div class="eyebrow">DISCOVER BLACK OWL</div>'+
         '<h1>Know the journey. Live the culture.</h1>'+
@@ -168,6 +170,47 @@ function home(){
       '</div>'+
     '</section>'+
   '</div>';
+}
+
+function homeLegacyCulture_(){
+  var values=[
+    {letter:'E',title:'Excellence',body:'Selalu mengedepankan kualitas dan hasil terbaik.'},
+    {letter:'P',title:'Persistence',body:'Terus maju dan pantang menyerah menghadapi tantangan.'},
+    {letter:'I',title:'Integrity',body:'Menjunjung kejujuran dan konsistensi dalam setiap tindakan.'},
+    {letter:'I',title:'Innovative',body:'Berpikir kreatif dan berani menciptakan hal baru.'},
+    {letter:'C',title:'Customer Centric',body:'Menghadirkan pengalaman terbaik bagi setiap pelanggan.'}
+  ];
+
+  return '<section class="home-v192-culture">'+
+    '<div class="home-v192-culture-backdrop"></div>'+
+    '<div class="home-v192-culture-inner">'+
+      '<div class="home-v192-intro">'+
+        '<p>Kami percaya bahwa setiap langkah besar dimulai dari kolaborasi yang kuat.</p>'+
+        '<p><strong>INSPIRE</strong> menghadirkan berbagai informasi, aktivitas, serta pencapaian yang menjadi bagian dari perjalanan kita sebagai satu tim.</p>'+
+        '<p>Mari terus berkolaborasi, berbagi semangat, dan bangga menjadi bagian dari perjalanan ini.</p>'+
+      '</div>'+
+      '<div class="home-v192-vm-grid">'+
+        '<div class="home-v192-vm">'+
+          '<div class="eyebrow">VISI</div><span class="home-v192-rule"></span>'+
+          '<p>Menjadi Pemimpin di Bidang Industri <em>Lifestyle</em></p>'+
+        '</div>'+
+        '<div class="home-v192-vm">'+
+          '<div class="eyebrow">MISI</div><span class="home-v192-rule"></span>'+
+          '<p>Menciptakan Pengalaman untuk Tamu yang Luar Biasa dan Inovatif</p>'+
+        '</div>'+
+      '</div>'+
+      '<div class="home-v192-values-head"><span>Core Values</span><strong>EPIIC</strong></div>'+
+      '<div class="home-v192-values">'+
+        values.map(function(v){
+          return '<div class="home-v192-value">'+
+            '<div class="home-v192-value-letter">'+esc(v.letter)+'</div>'+
+            '<h3>'+esc(v.title)+'</h3>'+
+            '<p>'+esc(v.body)+'</p>'+
+          '</div>';
+        }).join('')+
+      '</div>'+
+    '</div>'+
+  '</section>';
 }
 
 var homeCarouselIndex_=0;

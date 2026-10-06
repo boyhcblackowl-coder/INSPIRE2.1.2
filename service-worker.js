@@ -1,4 +1,4 @@
-const CACHE = 'inspire-2-1-2-v1-9-1-premium-home';
+const CACHE = 'inspire-2-1-2-v1-9-2-global-dark-culture';
 const BASE = '/INSPIRE2.1.2/';
 
 const SHELL = [
