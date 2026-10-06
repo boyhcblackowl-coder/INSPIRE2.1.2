@@ -257,10 +257,117 @@ function employeeCenterPage_(d){
       ecInfo_('Division',p.division,'🏢')+ecInfo_('Outlet / Location',p.outlet,'📍')+
       ecInfo_('Position',p.position,'💼')+ecInfo_('Join Date',p.joinDate||'-','📆')+
       ecInfo_('INSPIRE Role',p.role,'🔐')+
-      '<button class="ec-info-card" onclick="openChangePin()"><div class="ec-info-icon">🔑</div><div><span>Account Security</span><strong>Change INSPIRE PIN</strong></div></button>'+
+      '<button class="ec-info-card" onclick="openChangePin()"><div class="ec-info-icon">🔑</div><div><span>Account Security</span><strong>Change INSPIRE PIN</strong></div></button>'+      (p.canManageEmployees?'<button class="ec-info-card ec-admin-card" onclick="openEmployeeAccessAdmin()"><div class="ec-info-icon">🛡️</div><div><span>ADMIN CONTROL</span><strong>Employee Access</strong></div></button>':'')+
     '</section>'+
     '<div class="page-head section-gap"><div class="eyebrow">EMPLOYEE RESOURCES</div><h2>Everything you need in one place</h2><p>Policies, forms, benefits, directory, and Whistle Blowing System.</p></div>'+
     '<section class="ec-resource-grid">'+resources.map(ecResourceCard_).join('')+'</section>';
+}
+
+
+/* =========================================================
+   ADMIN — EMPLOYEE ACCESS
+   Backend reuses getEmployeeCenterData action to avoid a
+   separate Cloudflare whitelist change.
+   ========================================================= */
+
+var employeeAdminCache=null;
+
+async function openEmployeeAccessAdmin(force){
+  var root=q('#content');
+  root.innerHTML=loadingBlock_('ADMIN CONTROL','Employee Access','Loading employee access…');
+  try{
+    if(force||!employeeAdminCache) employeeAdminCache=await server('getEmployeeCenterData',token,'ADMIN_EMPLOYEES');
+    root.innerHTML=employeeAccessAdminPage_(employeeAdminCache);
+  }catch(e){
+    handle(e);
+    root.innerHTML=errorBlock_('ADMIN CONTROL','Unable to load Employee Access',e,'employeeAdminCache=null;openEmployeeAccessAdmin(true)');
+  }
+}
+
+function employeeAccessAdminPage_(d){
+  var summary=(d&&d.summary)||{};
+  var employees=(d&&d.employees)||[];
+  return '<button class="back-link" onclick="renderEmployeeCenter()">‹ Back to Employee Center</button>'+
+    '<section class="admin-access-hero">'+
+      '<div><div class="eyebrow">ADMIN CONTROL</div><h1>Employee Access</h1>'+
+      '<p>Deactivate employee access and revoke all active INSPIRE sessions in one action.</p></div>'+
+      '<div class="admin-access-icon">🛡️</div>'+
+    '</section>'+
+    '<section class="admin-access-metrics">'+
+      adminAccessMetric_('Total Employee',summary.total||0)+
+      adminAccessMetric_('Active',summary.active||0)+
+      adminAccessMetric_('Inactive',summary.inactive||0)+
+    '</section>'+
+    '<section class="admin-access-tools">'+
+      '<div class="handbook-search admin-access-search"><span>⌕</span><input id="employeeAccessSearch" placeholder="Search name, ID, email, outlet…" oninput="filterEmployeeAccess_()"></div>'+
+      '<button class="secondary" onclick="employeeAdminCache=null;openEmployeeAccessAdmin(true)">Refresh</button>'+
+    '</section>'+
+    '<div id="employeeAccessList" class="admin-access-list">'+employees.map(employeeAccessRow_).join('')+'</div>';
+}
+
+function adminAccessMetric_(label,value){
+  return '<div class="admin-access-metric"><span>'+esc(label)+'</span><strong>'+Number(value||0)+'</strong></div>';
+}
+
+function employeeAccessRow_(e){
+  var active=String(e.status||'').toUpperCase()==='ACTIVE';
+  var search=[e.employeeId,e.name,e.email,e.division,e.outlet,e.position,e.status,e.role].join(' ').toLowerCase();
+  return '<article class="admin-employee-row" data-employee-search="'+esc(search)+'">'+
+    '<div class="admin-employee-avatar">'+initials(e.name||e.employeeId||'BO')+'</div>'+
+    '<div class="admin-employee-main">'+
+      '<div class="admin-employee-title"><strong>'+esc(e.name||'-')+'</strong>'+
+        '<span class="admin-status '+(active?'is-active':'is-inactive')+'">'+esc(e.status||'-')+'</span>'+
+      '</div>'+
+      '<div class="admin-employee-meta">'+
+        '<span>'+esc(e.employeeId||'-')+'</span><span>'+esc(e.position||'-')+'</span>'+
+        '<span>'+esc(e.division||'-')+'</span><span>'+esc(e.outlet||'-')+'</span>'+
+      '</div>'+
+      '<div class="admin-employee-sub">'+esc(e.email||'-')+' · '+Number(e.activeSessions||0)+' active session'+(Number(e.activeSessions||0)===1?'':'s')+'</div>'+
+    '</div>'+
+    '<div class="admin-employee-action">'+
+      (e.isSelf?'<span class="admin-self">Your account</span>':
+        active?'<button class="danger-button" onclick="confirmDeactivateEmployee_(\''+arg(e.employeeId)+'\',\''+arg(e.name||e.employeeId)+'\')">Deactivate</button>':
+        '<span class="admin-disabled">Access disabled</span>')+
+    '</div>'+
+  '</article>';
+}
+
+function filterEmployeeAccess_(){
+  var input=q('#employeeAccessSearch');
+  var term=String(input&&input.value||'').trim().toLowerCase();
+  qa('.admin-employee-row').forEach(function(row){
+    row.style.display=!term||String(row.getAttribute('data-employee-search')||'').indexOf(term)>=0?'':'none';
+  });
+}
+
+function confirmDeactivateEmployee_(employeeId,name){
+  openModal(
+    '<div class="eyebrow">ADMIN CONTROL</div>'+
+    '<h2>Deactivate '+esc(name)+'?</h2>'+
+    '<p class="muted">This will set the employee to <strong>INACTIVE</strong> and immediately revoke every active INSPIRE session for this Employee ID.</p>'+
+    '<label>Reason / note <span class="muted">(optional)</span></label>'+
+    '<textarea id="deactivateReason" class="admin-reason" maxlength="300" placeholder="Example: Resigned effective 6 Oct 2026"></textarea>'+
+    '<div class="admin-warning">⚠️ The employee will no longer be able to access INSPIRE after their current session is rejected or refreshed.</div>'+
+    '<button class="danger-button full" style="margin-top:14px" onclick="deactivateEmployee_(\''+arg(employeeId)+'\')">Confirm Deactivate</button>'+
+    '<button class="secondary full" style="margin-top:8px" onclick="closeModal()">Cancel</button>'
+  );
+}
+
+async function deactivateEmployee_(employeeId){
+  var reasonEl=q('#deactivateReason');
+  var reason=reasonEl?reasonEl.value.trim():'';
+  var btn=q('.modal .danger-button');
+  if(btn){btn.disabled=true;btn.textContent='Deactivating…'}
+  try{
+    var result=await server('getEmployeeCenterData',token,'DEACTIVATE_EMPLOYEE',{employeeId:employeeId,reason:reason});
+    employeeAdminCache=null;
+    closeModal();
+    toast((result.name||employeeId)+' deactivated · '+Number(result.sessionsRevoked||0)+' session(s) revoked.');
+    await openEmployeeAccessAdmin(true);
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Confirm Deactivate'}
+    handle(e);
+  }
 }
 
 function profileImageUrl_(url){
@@ -997,7 +1104,7 @@ async function savePin(){
   try{await server('changePin',token,o,n);closeModal();toast('PIN updated.');await loadApp()}catch(e){handle(e)}
 }
 async function doLogout(){try{await server('logout',token)}catch(e){}clearSession();closeModal();showLogin()}
-function clearSession(){token='';data=null;lastLoginPin='';employeeCenterCache=null;communityCache=null;bossCache=null;learningCache=null;handbookCache=null;handbookActiveChapter='';localStorage.removeItem(TOKEN_KEY)}
+function clearSession(){token='';data=null;lastLoginPin='';employeeCenterCache=null;employeeAdminCache=null;communityCache=null;bossCache=null;learningCache=null;handbookCache=null;handbookActiveChapter='';localStorage.removeItem(TOKEN_KEY)}
 function togglePin(){var x=q('#pin'),b=x.nextElementSibling;x.type=x.type==='password'?'text':'password';b.textContent=x.type==='password'?'Show':'Hide'}
 function installText(){return /iphone|ipad|ipod/i.test(navigator.userAgent)?'Safari → Share → Add to Home Screen.':'Chrome → menu ⋮ → Add to Home screen / Install app.'}
 function openModal(h){q('#modalBody').innerHTML=h;q('#modal').classList.remove('hidden')}
