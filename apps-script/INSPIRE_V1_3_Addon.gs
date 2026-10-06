@@ -6,12 +6,20 @@
    requireSession_, rows_, sheet_, id_, audit_, clean_, formatDate_
    ========================================================= */
 
-function getEmployeeCenterData(sessionToken, mode) {
+function getEmployeeCenterData(sessionToken, mode, payload) {
   var s = requireSession_(sessionToken);
+  var actionMode = String(mode || '').toUpperCase();
 
-  if (String(mode || '').toUpperCase() === 'HANDBOOK') {
+  if (actionMode === 'HANDBOOK') {
     return getHandbookData_();
   }
+  if (actionMode === 'ADMIN_EMPLOYEES') {
+    return getAdminEmployeeAccessData_(s);
+  }
+  if (actionMode === 'DEACTIVATE_EMPLOYEE') {
+    return deactivateEmployeeAccess_(s, payload || {});
+  }
+
   var emp = s.employee;
   var role = String(emp.ROLE || 'USER').toUpperCase();
   var division = String(emp.DIVISION || '').toUpperCase();
@@ -79,9 +87,139 @@ function getEmployeeCenterData(sessionToken, mode) {
       photoUrl: emp.PHOTO_URL || '',
       status: emp.STATUS || '',
       joinDate: emp.JOIN_DATE || '',
-      role: role
+      role: role,
+      canManageEmployees: role === 'ADMIN'
     },
     resources: resources
+  };
+}
+
+
+function requireAdminSession_(sessionData) {
+  var emp = (sessionData && sessionData.employee) || {};
+  var role = String(emp.ROLE || '').toUpperCase();
+  if (role !== 'ADMIN') throw new Error('Admin access required.');
+  return emp;
+}
+
+function getAdminEmployeeAccessData_(sessionData) {
+  var admin = requireAdminSession_(sessionData);
+  var sessions = rows_('User_Sessions');
+  var activeSessions = {};
+
+  sessions.forEach(function(s){
+    if (String(s.STATUS || '').toUpperCase() !== 'ACTIVE') return;
+    var id = String(s.EMPLOYEE_ID || '').toUpperCase();
+    if (!id) return;
+    activeSessions[id] = (activeSessions[id] || 0) + 1;
+  });
+
+  var employees = rows_('Employees')
+    .map(function(e){
+      var id = String(e.EMPLOYEE_ID || '');
+      return {
+        employeeId: id,
+        name: e.NAME || '',
+        email: e.EMAIL || '',
+        division: e.DIVISION || '',
+        outlet: e.OUTLET || '',
+        position: e.POSITION || '',
+        status: String(e.STATUS || '').toUpperCase(),
+        role: String(e.ROLE || 'USER').toUpperCase(),
+        activeSessions: activeSessions[String(id).toUpperCase()] || 0,
+        isSelf: String(id).toUpperCase() === String(admin.EMPLOYEE_ID || '').toUpperCase()
+      };
+    })
+    .filter(function(e){ return e.employeeId; })
+    .sort(function(a,b){
+      var byStatus = (a.status === 'ACTIVE' ? 0 : 1) - (b.status === 'ACTIVE' ? 0 : 1);
+      if (byStatus) return byStatus;
+      return String(a.name || '').localeCompare(String(b.name || ''));
+    });
+
+  return {
+    employees: employees,
+    summary: {
+      total: employees.length,
+      active: employees.filter(function(e){return e.status === 'ACTIVE';}).length,
+      inactive: employees.filter(function(e){return e.status !== 'ACTIVE';}).length
+    }
+  };
+}
+
+function deactivateEmployeeAccess_(sessionData, payload) {
+  var admin = requireAdminSession_(sessionData);
+  var targetId = clean_(payload.employeeId || '', 120).toUpperCase();
+  var reason = clean_(payload.reason || '', 300);
+
+  if (!targetId) throw new Error('Employee ID is required.');
+  if (targetId === String(admin.EMPLOYEE_ID || '').toUpperCase()) {
+    throw new Error('You cannot deactivate your own account.');
+  }
+
+  var empSheet = sheet_('Employees');
+  var empValues = empSheet.getDataRange().getValues();
+  if (!empValues.length) throw new Error('Employees sheet is not configured.');
+
+  var empHeaders = empValues[0].map(String);
+  var iEmpId = empHeaders.indexOf('EMPLOYEE_ID');
+  var iStatus = empHeaders.indexOf('STATUS');
+  var iName = empHeaders.indexOf('NAME');
+  if (iEmpId < 0 || iStatus < 0) throw new Error('Employees sheet is missing required columns.');
+
+  var targetRow = -1;
+  var targetName = '';
+  for (var i = 1; i < empValues.length; i++) {
+    if (String(empValues[i][iEmpId] || '').toUpperCase() === targetId) {
+      targetRow = i + 1;
+      targetName = iName >= 0 ? String(empValues[i][iName] || '') : '';
+      break;
+    }
+  }
+  if (targetRow < 0) throw new Error('Employee not found.');
+
+  empSheet.getRange(targetRow, iStatus + 1).setValue('INACTIVE');
+
+  var sessionSheet = sheet_('User_Sessions');
+  var sessionValues = sessionSheet.getDataRange().getValues();
+  var revoked = 0;
+
+  if (sessionValues.length) {
+    var sessionHeaders = sessionValues[0].map(String);
+    var sEmp = sessionHeaders.indexOf('EMPLOYEE_ID');
+    var sStatus = sessionHeaders.indexOf('STATUS');
+    if (sEmp >= 0 && sStatus >= 0) {
+      for (var r = 1; r < sessionValues.length; r++) {
+        if (
+          String(sessionValues[r][sEmp] || '').toUpperCase() === targetId &&
+          String(sessionValues[r][sStatus] || '').toUpperCase() === 'ACTIVE'
+        ) {
+          sessionValues[r][sStatus] = 'REVOKED';
+          revoked++;
+        }
+      }
+      if (sessionValues.length > 1) {
+        sessionSheet.getRange(2, 1, sessionValues.length - 1, sessionHeaders.length)
+          .setValues(sessionValues.slice(1));
+      }
+    }
+  }
+
+  audit_(
+    admin.EMPLOYEE_ID || '',
+    'DEACTIVATE_EMPLOYEE',
+    targetId,
+    (targetName ? targetName + ' | ' : '') +
+      'sessions_revoked=' + revoked +
+      (reason ? ' | reason=' + reason : '')
+  );
+
+  return {
+    ok: true,
+    employeeId: targetId,
+    name: targetName,
+    status: 'INACTIVE',
+    sessionsRevoked: revoked
   };
 }
 
