@@ -613,3 +613,171 @@ button.home-feature-card{width:100%;cursor:pointer}
   .home-v19-slide-copy h2{font-size:28px}
   .home-v19-arrow{width:38px;height:38px;font-size:25px}
 }
+
+
+/* =========================================================
+   V1.9.1 — PREMIUM LEGACY-INSPIRED HOME
+   Brings back the dark, atmospheric feel of the original
+   INSPIRE while keeping the cleaner V4 layout.
+   ========================================================= */
+.home-v191-page{
+  position:relative;isolation:isolate;
+  margin:-28px -26px -60px;padding:28px 26px 60px;
+  min-height:100vh;overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 8%,rgba(215,185,124,.11),transparent 24%),
+    radial-gradient(circle at 88% 30%,rgba(35,31,24,.055),transparent 26%),
+    linear-gradient(180deg,#f8f4eb 0%,#f5efe3 46%,#faf7f0 100%);
+}
+.home-v191-page:before{
+  content:"";position:absolute;z-index:-2;inset:0;pointer-events:none;opacity:.36;
+  background:
+    linear-gradient(115deg,transparent 0 37%,rgba(183,145,78,.055) 37.2% 37.45%,transparent 37.7% 100%),
+    linear-gradient(65deg,transparent 0 72%,rgba(25,23,19,.032) 72.15% 72.35%,transparent 72.55% 100%);
+  background-size:520px 520px,680px 680px;
+}
+.home-v191-page:after{
+  content:"";position:absolute;z-index:-1;right:-180px;top:510px;width:520px;height:520px;
+  border:1px solid rgba(177,139,73,.08);border-radius:50%;box-shadow:
+    0 0 0 52px rgba(177,139,73,.025),
+    0 0 0 105px rgba(17,17,17,.018);
+  pointer-events:none;
+}
+
+/* Hero becomes a more editorial Black Owl entrance */
+.home-v191-page .home-v19-hero{
+  border:1px solid rgba(215,185,124,.28);
+  box-shadow:0 24px 54px rgba(21,18,13,.17),0 1px 0 rgba(255,255,255,.07) inset;
+}
+.home-v191-page .home-v19-hero:after{
+  content:"";position:absolute;z-index:1;left:36px;right:36px;bottom:21px;height:1px;
+  background:linear-gradient(90deg,#d7b97c,rgba(215,185,124,.15),transparent 76%);
+}
+.home-v191-page .home-v19-hero-content{padding-bottom:48px}
+
+/* Metrics float like premium stat plaques */
+.home-v191-page .home-v19-metrics{
+  position:relative;z-index:3;margin-top:-2px;margin-bottom:28px;
+}
+.home-v191-page .home-v19-metrics .metric{
+  position:relative;overflow:hidden;background:rgba(255,253,249,.9);
+  border:1px solid rgba(196,163,105,.35);
+  box-shadow:0 12px 30px rgba(55,43,23,.065);
+  backdrop-filter:blur(12px)
+}
+.home-v191-page .home-v19-metrics .metric:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,#d9bd80,#8b6427)
+}
+.home-v191-page .home-v19-metrics .metric strong{color:#17130d}
+
+/* Dark legacy band — inspired by the original INSPIRE's black textured canvas */
+.home-v191-legacy-band{
+  position:relative;overflow:hidden;margin:0 -26px;padding:34px 26px 38px;
+  background:
+    radial-gradient(circle at 14% 12%,rgba(215,185,124,.14),transparent 31%),
+    linear-gradient(135deg,#0b0c0d 0%,#161613 56%,#0b0c0d 100%);
+  border-top:1px solid rgba(215,185,124,.16);
+  border-bottom:1px solid rgba(215,185,124,.16)
+}
+.home-v191-legacy-band:before{
+  content:"";position:absolute;inset:0;opacity:.09;
+  background:url("assets/home/carousel-crowd.jpg") center 43%/cover no-repeat;
+  filter:grayscale(1) contrast(1.1);
+  transform:scale(1.025)
+}
+.home-v191-legacy-band:after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,rgba(7,7,7,.94) 0%,rgba(7,7,7,.55) 42%,rgba(7,7,7,.88) 100%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 4px);
+  pointer-events:none
+}
+.home-v191-band-glow{
+  position:absolute;z-index:1;width:360px;height:360px;right:-120px;top:-130px;border-radius:50%;
+  background:radial-gradient(circle,rgba(215,185,124,.17),transparent 67%);filter:blur(6px)
+}
+.home-v191-legacy-band .home-v19-showcase{position:relative;z-index:2;margin:0}
+.home-v191-legacy-band .home-v19-showcase-head{margin-bottom:15px}
+.home-v191-legacy-band .home-v19-showcase-head .eyebrow{color:#d7b97c}
+.home-v191-legacy-band .home-v19-showcase-head h2{color:#fff}
+.home-v191-legacy-band .home-v19-count{color:#aa9265}
+.home-v191-legacy-band .home-v19-count span{color:#fff}
+.home-v191-legacy-band .home-v19-carousel{
+  border:1px solid rgba(215,185,124,.2);
+  box-shadow:0 24px 58px rgba(0,0,0,.34)
+}
+
+/* Light editorial culture section */
+.home-v191-light-zone{
+  position:relative;margin:0 -26px;padding:36px 26px 40px;
+  background:
+    radial-gradient(circle at 85% 0%,rgba(215,185,124,.13),transparent 26%),
+    linear-gradient(180deg,rgba(255,253,249,.96),rgba(247,241,229,.93));
+  border-bottom:1px solid rgba(188,154,95,.18)
+}
+.home-v191-light-zone:before{
+  content:"BLACK OWL";position:absolute;right:24px;top:28px;
+  font-size:74px;font-weight:950;letter-spacing:.06em;color:rgba(31,27,20,.025);
+  pointer-events:none;white-space:nowrap
+}
+.home-v191-light-zone .home-section-head{position:relative;margin-top:0;max-width:720px}
+.home-v191-light-zone .home-feature-card{
+  background:rgba(255,255,255,.78);backdrop-filter:blur(8px);
+  border-color:rgba(196,163,105,.34);
+  box-shadow:0 14px 34px rgba(45,34,17,.07)
+}
+.home-v191-light-zone .home-feature-card:hover{
+  background:#fffdf9;box-shadow:0 18px 42px rgba(45,34,17,.11)
+}
+
+/* Dark closing block — old INSPIRE energy, new V4 cards */
+.home-v191-dark-zone{
+  position:relative;overflow:hidden;margin:0 -26px -60px;padding:40px 26px 60px;
+  background:
+    radial-gradient(circle at 80% 18%,rgba(215,185,124,.16),transparent 28%),
+    linear-gradient(145deg,#0a0b0c 0%,#151514 56%,#0c0d0e 100%);
+  border-top:1px solid rgba(215,185,124,.19)
+}
+.home-v191-dark-backdrop{
+  position:absolute;inset:0;opacity:.075;
+  background:url("assets/home/hero-collage.jpg") center/cover no-repeat;
+  filter:grayscale(1)
+}
+.home-v191-dark-zone:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(9,10,11,.73),rgba(9,10,11,.92));pointer-events:none
+}
+.home-v191-dark-zone>.page-head,
+.home-v191-dark-zone>.home-v19-modules{position:relative;z-index:2}
+.home-v191-dark-zone .home-section-head{margin-top:0}
+.home-v191-dark-zone .home-section-head .eyebrow{color:#d7b97c}
+.home-v191-dark-zone .home-section-head h1{color:#fff}
+.home-v191-dark-zone .home-section-head p{color:#c9c0b1}
+.home-v191-dark-zone .home-v19-modules .module-card{
+  background:rgba(24,24,23,.78);color:#fff;
+  border:1px solid rgba(215,185,124,.16);
+  box-shadow:0 14px 30px rgba(0,0,0,.18);backdrop-filter:blur(9px)
+}
+.home-v191-dark-zone .home-v19-modules .module-card h3{color:#fff}
+.home-v191-dark-zone .home-v19-modules .module-card p{color:#bfb6a8}
+.home-v191-dark-zone .home-v19-modules .module-card .icon{
+  width:43px;height:43px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+  background:rgba(215,185,124,.12);border:1px solid rgba(215,185,124,.17)
+}
+.home-v191-dark-zone .home-v19-modules .module-card:hover{
+  background:rgba(39,36,29,.92);border-color:rgba(215,185,124,.58);
+  box-shadow:0 18px 38px rgba(0,0,0,.28)
+}
+
+@media(max-width:760px){
+  .home-v191-page{margin:-16px -13px -25px;padding:16px 13px 25px}
+  .home-v191-legacy-band,.home-v191-light-zone{margin-left:-13px;margin-right:-13px;padding-left:13px;padding-right:13px}
+  .home-v191-dark-zone{margin-left:-13px;margin-right:-13px;margin-bottom:-25px;padding-left:13px;padding-right:13px;padding-bottom:38px}
+  .home-v191-light-zone:before{font-size:38px;right:10px;top:30px}
+  .home-v191-page .home-v19-hero:after{left:22px;right:22px}
+  .home-v191-page .home-v19-hero-content{padding-bottom:38px}
+  .home-v191-legacy-band{padding-top:27px;padding-bottom:28px}
+  .home-v191-light-zone{padding-top:29px;padding-bottom:31px}
+  .home-v191-dark-zone{padding-top:31px}
+}
