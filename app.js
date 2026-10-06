@@ -124,7 +124,8 @@ function home(){
     return '<div class="card metric"><span>'+esc(m.METRIC)+'</span><strong>'+esc(m.VALUE)+'</strong></div>'
   }).join('');
 
-  return '<section class="home-v19-hero">'+
+  return '<div class="home-v191-page">'+
+    '<section class="home-v19-hero">'+
       '<img class="home-v19-hero-bg" src="assets/home/hero-collage.jpg" alt="sOWLdiers">'+
       '<div class="home-v19-hero-overlay"></div>'+
       '<div class="home-v19-hero-content">'+
@@ -136,28 +137,37 @@ function home(){
     (data.forcePinChange?'<div class="notice">🔐 You are using a temporary PIN. Please create your personal PIN from Profile.</div>':'')+
     (metrics?'<div class="grid home-v19-metrics">'+metrics+'</div>':'')+
 
-    homeCarousel_()+
+    '<section class="home-v191-legacy-band">'+
+      '<div class="home-v191-band-glow"></div>'+
+      homeCarousel_()+
+    '</section>'+
 
-    '<div class="page-head home-section-head"><div class="eyebrow">DISCOVER BLACK OWL</div>'+
-      '<h1>Know the journey. Live the culture.</h1>'+
-      '<p>Get to know Black Owl, our direction, and the values behind the way we work.</p></div>'+
-    '<div class="home-feature-grid">'+
-      '<button class="home-feature-card about-card" onclick="openAboutUs()">'+
-        '<div class="home-feature-icon">🦉</div>'+
-        '<div><div class="eyebrow">ABOUT US</div><h3>Black Owl Indonesia</h3>'+
-        '<p>Vision, mission, and the EPIIC values that guide every sOWLdier.</p></div><span class="feature-arrow">›</span>'+
-      '</button>'+
-      officialInstagramCard_()+
-    '</div>'+
+    '<section class="home-v191-light-zone">'+
+      '<div class="page-head home-section-head"><div class="eyebrow">DISCOVER BLACK OWL</div>'+
+        '<h1>Know the journey. Live the culture.</h1>'+
+        '<p>Get to know Black Owl, our direction, and the values behind the way we work.</p></div>'+
+      '<div class="home-feature-grid">'+
+        '<button class="home-feature-card about-card" onclick="openAboutUs()">'+
+          '<div class="home-feature-icon">🦉</div>'+
+          '<div><div class="eyebrow">ABOUT US</div><h3>Black Owl Indonesia</h3>'+
+          '<p>Vision, mission, and the EPIIC values that guide every sOWLdier.</p></div><span class="feature-arrow">›</span>'+
+        '</button>'+
+        officialInstagramCard_()+
+      '</div>'+
+    '</section>'+
 
-    '<div class="page-head home-section-head"><div class="eyebrow">YOUR INSPIRE</div><h1>Everything in one place</h1>'+
-      '<p>Employee services, community, learning, culture, and growth.</p></div>'+
-    '<div class="grid home-v19-modules">'+
-      data.menus.filter(function(m){return m.route!=='home'}).map(function(m){
-        return '<button class="card module-card" style="text-align:left" onclick="go(\''+arg(m.route)+'\')">'+
-          '<div class="icon">'+esc(m.icon)+'</div><h3>'+esc(m.label)+'</h3><p>'+esc(m.description||'INSPIRE module')+'</p></button>'
-      }).join('')+
-    '</div>';
+    '<section class="home-v191-dark-zone">'+
+      '<div class="home-v191-dark-backdrop"></div>'+
+      '<div class="page-head home-section-head"><div class="eyebrow">YOUR INSPIRE</div><h1>Everything in one place</h1>'+
+        '<p>Employee services, community, learning, culture, and growth.</p></div>'+
+      '<div class="grid home-v19-modules">'+
+        data.menus.filter(function(m){return m.route!=='home'}).map(function(m){
+          return '<button class="card module-card" style="text-align:left" onclick="go(\''+arg(m.route)+'\')">'+
+            '<div class="icon">'+esc(m.icon)+'</div><h3>'+esc(m.label)+'</h3><p>'+esc(m.description||'INSPIRE module')+'</p></button>'
+        }).join('')+
+      '</div>'+
+    '</section>'+
+  '</div>';
 }
 
 var homeCarouselIndex_=0;
