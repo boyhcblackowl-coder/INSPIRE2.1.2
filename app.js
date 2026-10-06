@@ -110,7 +110,7 @@ function renderShell(){
 function go(r){
   activeRoute=r;
   qa('[data-r]').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-r')===r)});
-  if(r==='home'){q('#content').innerHTML=home()}
+  if(r==='home'){q('#content').innerHTML=home();setTimeout(initHomeCarousel_,0)}
   else if(r==='employee'){renderEmployeeCenter()}
   else if(r==='community'){renderCommunity()}
   else if(r==='boss'){renderBoss()}
@@ -124,11 +124,19 @@ function home(){
     return '<div class="card metric"><span>'+esc(m.METRIC)+'</span><strong>'+esc(m.VALUE)+'</strong></div>'
   }).join('');
 
-  return '<div class="hero"><div class="eyebrow" style="color:#D7B97C">THE DIGITAL HOME OF sOWLdiers</div>'+
-    '<h1>Hi, '+esc(fullName)+'! 👋</h1>'+
-    '<p>One login for connection, learning, employee services, culture, and growth at Black Owl.</p></div>'+
+  return '<section class="home-v19-hero">'+
+      '<img class="home-v19-hero-bg" src="assets/home/hero-collage.jpg" alt="sOWLdiers">'+
+      '<div class="home-v19-hero-overlay"></div>'+
+      '<div class="home-v19-hero-content">'+
+        '<div class="eyebrow">THE DIGITAL HOME OF sOWLdiers</div>'+
+        '<h1>Hi, '+esc(fullName)+'! 👋</h1>'+
+        '<p>One login for connection, learning, employee services, culture, and growth at Black Owl.</p>'+
+      '</div>'+
+    '</section>'+
     (data.forcePinChange?'<div class="notice">🔐 You are using a temporary PIN. Please create your personal PIN from Profile.</div>':'')+
-    (metrics?'<div class="grid">'+metrics+'</div>':'')+
+    (metrics?'<div class="grid home-v19-metrics">'+metrics+'</div>':'')+
+
+    homeCarousel_()+
 
     '<div class="page-head home-section-head"><div class="eyebrow">DISCOVER BLACK OWL</div>'+
       '<h1>Know the journey. Live the culture.</h1>'+
@@ -144,12 +152,78 @@ function home(){
 
     '<div class="page-head home-section-head"><div class="eyebrow">YOUR INSPIRE</div><h1>Everything in one place</h1>'+
       '<p>Employee services, community, learning, culture, and growth.</p></div>'+
-    '<div class="grid">'+
+    '<div class="grid home-v19-modules">'+
       data.menus.filter(function(m){return m.route!=='home'}).map(function(m){
         return '<button class="card module-card" style="text-align:left" onclick="go(\''+arg(m.route)+'\')">'+
           '<div class="icon">'+esc(m.icon)+'</div><h3>'+esc(m.label)+'</h3><p>'+esc(m.description||'INSPIRE module')+'</p></button>'
       }).join('')+
     '</div>';
+}
+
+var homeCarouselIndex_=0;
+var homeCarouselTimer_=null;
+
+function homeCarouselSlides_(){
+  return [
+    {img:'assets/home/carousel-halloween.jpg',eyebrow:'CELEBRATE TOGETHER',title:'Halloween Celebration',copy:'Creativity, energy, and unforgettable moments together.'},
+    {img:'assets/home/carousel-boss.jpg',eyebrow:'BLACK OWL SPORTS SERIES',title:'Stronger Together',copy:'Building teamwork, spirit, and ownership beyond work.'},
+    {img:'assets/home/carousel-team.jpg',eyebrow:'OUR PEOPLE',title:'Our People, Our Strength',copy:'The faces behind the Black Owl experience.'},
+    {img:'assets/home/carousel-bukber.jpg',eyebrow:'TOGETHER IN EVERY MOMENT',title:'Growing Together',copy:'Celebrating connection, collaboration, and togetherness as sOWLdiers.'},
+    {img:'assets/home/carousel-crowd.jpg',eyebrow:'PROUD TO BE sOWLdiers',title:'One Team. One Journey.',copy:'More than a workplace — a journey we build together.'},
+    {img:'assets/home/carousel-stage.jpg',eyebrow:'BLACK OWL EXPERIENCE',title:'Where Energy Comes Alive',copy:'Entertainment, ambience, and the pulse of Black Owl.'}
+  ];
+}
+
+function homeCarousel_(){
+  var slides=homeCarouselSlides_();
+  return '<section class="home-v19-showcase">'+
+    '<div class="home-v19-showcase-head"><div><div class="eyebrow">LIFE AT BLACK OWL</div><h2>Moments that define our journey.</h2></div>'+
+    '<div class="home-v19-count"><span id="homeCarouselCurrent">01</span> / '+String(slides.length).padStart(2,'0')+'</div></div>'+
+    '<div class="home-v19-carousel" id="homeCarousel">'+
+      slides.map(function(s,i){
+        return '<article class="home-v19-slide'+(i===0?' active':'')+'" data-slide="'+i+'">'+
+          '<img src="'+esc(s.img)+'" alt="'+esc(s.title)+'" loading="'+(i===0?'eager':'lazy')+'">'+
+          '<div class="home-v19-slide-shade"></div>'+
+          '<div class="home-v19-slide-copy"><div class="eyebrow">'+esc(s.eyebrow)+'</div><h2>'+esc(s.title)+'</h2><p>'+esc(s.copy)+'</p></div>'+
+        '</article>';
+      }).join('')+
+      '<button class="home-v19-arrow prev" onclick="moveHomeCarousel_(-1)" aria-label="Previous slide">‹</button>'+
+      '<button class="home-v19-arrow next" onclick="moveHomeCarousel_(1)" aria-label="Next slide">›</button>'+
+      '<div class="home-v19-dots">'+slides.map(function(_,i){return '<button class="'+(i===0?'active':'')+'" onclick="setHomeCarousel_('+i+')" aria-label="Slide '+(i+1)+'"></button>'}).join('')+'</div>'+
+    '</div>'+
+  '</section>';
+}
+
+function initHomeCarousel_(){
+  if(!q('#homeCarousel'))return;
+  homeCarouselIndex_=0;
+  if(homeCarouselTimer_)clearInterval(homeCarouselTimer_);
+  homeCarouselTimer_=setInterval(function(){
+    if(!q('#homeCarousel')){clearInterval(homeCarouselTimer_);homeCarouselTimer_=null;return}
+    moveHomeCarousel_(1);
+  },5000);
+}
+
+function setHomeCarousel_(index){
+  var slides=qa('.home-v19-slide');
+  var dots=qa('.home-v19-dots button');
+  if(!slides.length)return;
+  homeCarouselIndex_=(index+slides.length)%slides.length;
+  slides.forEach(function(s,i){s.classList.toggle('active',i===homeCarouselIndex_)});
+  dots.forEach(function(d,i){d.classList.toggle('active',i===homeCarouselIndex_)});
+  var count=q('#homeCarouselCurrent');
+  if(count)count.textContent=String(homeCarouselIndex_+1).padStart(2,'0');
+  if(homeCarouselTimer_){
+    clearInterval(homeCarouselTimer_);
+    homeCarouselTimer_=setInterval(function(){
+      if(!q('#homeCarousel')){clearInterval(homeCarouselTimer_);homeCarouselTimer_=null;return}
+      setHomeCarousel_(homeCarouselIndex_+1);
+    },5000);
+  }
+}
+
+function moveHomeCarousel_(delta){
+  setHomeCarousel_(homeCarouselIndex_+delta);
 }
 
 function openAboutUs(){

@@ -507,3 +507,109 @@ button.home-feature-card{width:100%;cursor:pointer}
   .admin-employee-action{grid-column:1/-1}
   .admin-employee-action .danger-button{width:100%}
 }
+
+
+/* =========================================================
+   V1.9 — HOME EXPERIENCE REFRESH
+   ========================================================= */
+.home-v19-hero{
+  position:relative;overflow:hidden;border-radius:24px;min-height:310px;
+  display:flex;align-items:flex-end;margin-bottom:18px;
+  background:#101010;box-shadow:0 16px 38px rgba(17,17,17,.14)
+}
+.home-v19-hero-bg{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:center;transform:scale(1.01)
+}
+.home-v19-hero-overlay{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,rgba(8,8,8,.92) 0%,rgba(8,8,8,.68) 46%,rgba(8,8,8,.35) 75%,rgba(8,8,8,.58) 100%),
+    linear-gradient(0deg,rgba(8,8,8,.58),transparent 55%)
+}
+.home-v19-hero-content{
+  position:relative;z-index:2;padding:34px 36px 38px;max-width:760px;color:#fff
+}
+.home-v19-hero-content .eyebrow{color:#d7b97c;letter-spacing:.16em}
+.home-v19-hero-content h1{
+  margin:7px 0 9px;font-size:42px;line-height:1.04;color:#fff;
+  text-shadow:0 2px 18px rgba(0,0,0,.3)
+}
+.home-v19-hero-content p{margin:0;color:#f0e9df;font-size:15px;line-height:1.65}
+.home-v19-metrics{margin-bottom:24px}
+.home-v19-metrics .metric{border-color:#e4d8c0;background:#fffdfa}
+
+.home-v19-showcase{margin:25px 0 8px}
+.home-v19-showcase-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:0 2px 12px
+}
+.home-v19-showcase-head h2{margin:3px 0 0;font-size:28px}
+.home-v19-count{
+  color:#9a7b43;font-weight:900;font-size:12px;letter-spacing:.12em;white-space:nowrap
+}
+.home-v19-count span{font-size:18px;color:#171717}
+.home-v19-carousel{
+  position:relative;overflow:hidden;border-radius:24px;background:#111;
+  min-height:430px;box-shadow:0 16px 38px rgba(17,17,17,.14)
+}
+.home-v19-slide{
+  position:absolute;inset:0;opacity:0;visibility:hidden;
+  transition:opacity .8s ease,visibility .8s ease;pointer-events:none
+}
+.home-v19-slide.active{opacity:1;visibility:visible;pointer-events:auto}
+.home-v19-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.home-v19-slide-shade{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,rgba(10,10,10,.78) 0%,rgba(10,10,10,.36) 50%,rgba(10,10,10,.16) 100%),
+    linear-gradient(0deg,rgba(10,10,10,.65) 0%,transparent 52%)
+}
+.home-v19-slide-copy{
+  position:absolute;left:34px;bottom:36px;z-index:2;max-width:620px;color:#fff
+}
+.home-v19-slide-copy .eyebrow{color:#e1c47e}
+.home-v19-slide-copy h2{
+  margin:6px 0 8px;color:#fff;font-size:34px;line-height:1.08;
+  text-shadow:0 2px 16px rgba(0,0,0,.28)
+}
+.home-v19-slide-copy p{margin:0;color:#eee6da;font-size:14px;line-height:1.55}
+.home-v19-arrow{
+  position:absolute;z-index:4;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;background:rgba(10,10,10,.48);color:#fff;
+  font-size:30px;line-height:1;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(6px)
+}
+.home-v19-arrow:hover{background:rgba(215,185,124,.92);color:#111}
+.home-v19-arrow.prev{left:16px}.home-v19-arrow.next{right:16px}
+.home-v19-dots{
+  position:absolute;z-index:4;left:50%;bottom:15px;transform:translateX(-50%);
+  display:flex;align-items:center;gap:7px
+}
+.home-v19-dots button{
+  width:8px;height:8px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.48);
+  cursor:pointer;transition:width .25s ease,background .25s ease
+}
+.home-v19-dots button.active{width:24px;background:#d7b97c}
+
+.home-v19-modules .module-card,
+.home-feature-card{
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease
+}
+.home-v19-modules .module-card:hover,
+.home-feature-card:hover{
+  transform:translateY(-3px);border-color:#d7b97c;
+  box-shadow:0 12px 30px rgba(35,27,16,.08)
+}
+
+@media(max-width:760px){
+  .home-v19-hero{min-height:270px;border-radius:19px}
+  .home-v19-hero-content{padding:25px 22px 28px}
+  .home-v19-hero-content h1{font-size:31px}
+  .home-v19-showcase-head{align-items:flex-start}
+  .home-v19-showcase-head h2{font-size:23px}
+  .home-v19-carousel{min-height:360px;border-radius:19px}
+  .home-v19-slide-copy{left:22px;right:22px;bottom:36px}
+  .home-v19-slide-copy h2{font-size:28px}
+  .home-v19-arrow{width:38px;height:38px;font-size:25px}
+}
